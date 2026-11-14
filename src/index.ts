@@ -44,6 +44,7 @@ import {
   DEFAULT_APPLY_TO_SUBAGENTS,
   DEFAULT_APPLY_TO_OTHER_PRESETS,
   DEFAULT_BASE_TOOLS,
+  DEFAULT_CATALOG_TOOLS,
   DEFAULT_DELEGATE_PROVIDER,
   DEFAULT_DELEGATE_SEALED,
   DEFAULT_DELEGATE_TOOL_NAME,
@@ -88,6 +89,8 @@ export interface Config {
   applyToOtherPresets?: boolean
   /** Tools this gate always hides: never in the base set, never selectable, never selectable for a child. */
   hiddenTools?: string[]
+  /** Optional catalog allowlist; empty offers every inherited tool. */
+  catalogTools?: string[]
   /** Longest catalog description retained per tool. */
   maxDescriptionChars?: number
 }
@@ -104,6 +107,7 @@ export const Config: z<Config> = z.object({
   presetId: z.string().default(DEFAULT_PRESET_ID),
   applyToOtherPresets: z.boolean().default(DEFAULT_APPLY_TO_OTHER_PRESETS),
   hiddenTools: z.array(z.string()).default([]),
+  catalogTools: z.array(z.string()).default([...DEFAULT_CATALOG_TOOLS]),
   maxDescriptionChars: z.number().default(DEFAULT_MAX_DESCRIPTION_CHARS),
 })
 
@@ -131,6 +135,12 @@ export function apply(ctx: Context, config: Config): void {
       throw new Error(`dsh-tool-gate: hiddenTools must not hide the gate tool "${hidden}"`)
     }
   }
+  const catalogSeen = new Set<string>()
+  for (const name of resolved.catalogTools) {
+    if (name === '') throw new Error('dsh-tool-gate: catalogTools must not contain an empty name')
+    if (catalogSeen.has(name)) throw new Error(`dsh-tool-gate: catalogTools lists "${name}" more than once`)
+    catalogSeen.add(name)
+  }
 
   const settings: GateSettings = {
     baseTools: [...resolved.baseTools],
@@ -142,6 +152,7 @@ export function apply(ctx: Context, config: Config): void {
     presetId: resolved.presetId,
     applyToOtherPresets: resolved.applyToOtherPresets,
     hiddenTools: [...resolved.hiddenTools],
+    catalogTools: [...resolved.catalogTools],
     maxDescriptionChars: resolved.maxDescriptionChars,
   }
 
@@ -222,26 +233,36 @@ export function apply(ctx: Context, config: Config): void {
   })
 
   // A genuine user message opens a fresh selection window. The claim event is
-  // emitted synchronously before this step's tool surface is resolved, so the
-  // reset is already in force for the step that answers the user. Runtime-context
-  // and child-result messages carry their own source kinds and do not reset.
-  ctx.on('agent/inbox/claimed', ({ agent, message }) => {
-    if (message.role !== 'user' || message.source?.kind !== 'user') return
-    gate.startTurn(agent)
-  })
-  // Serial listeners are awaited before creation resolves, so the restriction is
-  // in place before the agent's first request sees a tool list. A parent-gated
-  // child (`delegate`) is always installed even when `applyToSubagents` is off:
-  // its surface is the reservation, not the composition.
-  ctx.on('agent/created', ({ agent }) => {
-    // A session in another Agent preset keeps the full surface; only the gate
-    // tools are hidden, so those presets never offer a tool they cannot use.
-    if (!appliesTo(agent)) {
-      gate.excludeGateTools(agent)
+  // emitted synchronously before this step's tool surface is resolved, so both
+  // the preset decision and the reset are in force for the step that answers
+  // the user. Runtime-context and child-result messages do not reset.
+  const decide = (agent: Agent): void => {
+    const reserved = gate.hasReservation(String(agent.id))
+    if (!settings.applyToSubagents && !reserved && !isRootAgent(roots, agent)) {
+      // A child of a non-gated parent keeps exactly what the composition gave it.
+      if (gate.isInstalled(agent)) gate.dispose(agent)
       return
     }
-    if (!settings.applyToSubagents && !gate.hasReservation(String(agent.id)) && !isRootAgent(roots, agent)) return
-    gate.install(agent)
+    if (appliesTo(agent)) {
+      // The preset may change while a session is blank, so this decision runs on
+      // creation and again on every claimed user message; install is idempotent.
+      if (!gate.isInstalled(agent)) gate.install(agent)
+      return
+    }
+    // Another preset: keep its full surface, hide only the gate tools.
+    if (gate.isInstalled(agent)) gate.dispose(agent)
+    gate.excludeGateTools(agent)
+  }
+
+  ctx.on('agent/inbox/claimed', ({ agent, message }) => {
+    if (message.role !== 'user' || message.source?.kind !== 'user') return
+    decide(agent)
+    gate.startTurn(agent)
+  })
+  // Serial listeners are awaited before creation resolves, so a gated agent's
+  // restriction is in place before its first request sees a tool list.
+  ctx.on('agent/created', ({ agent }) => {
+    decide(agent)
   })
   ctx.on('agent/disposed', ({ agent }) => {
     gate.dispose(agent)

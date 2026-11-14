@@ -51,6 +51,13 @@ export const DEFAULT_APPLY_TO_OTHER_PRESETS = false
 /** Longest catalog description retained per tool. */
 export const DEFAULT_MAX_DESCRIPTION_CHARS = 160
 
+/**
+ * Optional allowlist for the per-turn catalog. Empty means every inherited tool
+ * is offered; a non-empty list keeps a profile's extra bundles out of a focused
+ * preset, while the base tools and the gate tools stay exposed regardless.
+ */
+export const DEFAULT_CATALOG_TOOLS: readonly string[] = []
+
 /** Fully defaulted settings, frozen once at load. */
 export interface GateSettings {
   /** Base tools requested by the deployment, in configuration order. */
@@ -71,6 +78,8 @@ export interface GateSettings {
   readonly applyToOtherPresets: boolean
   /** Tools this gate hides from every gated agent and never offers to select. */
   readonly hiddenTools: readonly string[]
+  /** Tools the catalog may offer; empty offers every inherited tool. */
+  readonly catalogTools: readonly string[]
   /** Longest catalog description retained per tool, in characters. */
   readonly maxDescriptionChars: number
 }

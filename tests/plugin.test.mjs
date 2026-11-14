@@ -49,6 +49,7 @@ describe('Config', () => {
     assert.equal(resolved.presetId, 'tool-gate')
     assert.equal(resolved.applyToOtherPresets, false)
     assert.deepEqual(resolved.hiddenTools, [])
+    assert.deepEqual(resolved.catalogTools, [])
     assert.equal(resolved.maxDescriptionChars, 160)
   })
 

@@ -175,6 +175,9 @@ export class ToolGate {
    * @param agent - the agent to gate.
    */
   install(agent: Agent): void {
+    // A previous decision for another preset may have denied the gate tools;
+    // the snapshot must see the full pre-restriction surface, so lift that first.
+    this.allowGateTools(agent)
     let state = this.states.get(agent)
     if (state === undefined) {
       const catalog = this.snapshot(agent)
@@ -221,6 +224,19 @@ export class ToolGate {
       this.states.delete(agent)
     }
     this.reservations.clear()
+  }
+
+  /** Remove the deny filter that kept the gate tools out of an excluded agent. */
+  allowGateTools(agent: Agent): void {
+    const dispose = this.exclusions.get(agent)
+    if (dispose === undefined) return
+    dispose()
+    this.exclusions.delete(agent)
+  }
+
+  /** Whether the gate currently restricts this agent. */
+  isInstalled(agent: Agent): boolean {
+    return this.states.has(agent)
   }
 
   /**
@@ -413,10 +429,17 @@ export class ToolGate {
   private snapshot(agent: Agent): Map<string, CatalogEntry> {
     const catalog = new Map<string, CatalogEntry>()
     const hidden = new Set(this.settings.hiddenTools)
+    // A non-empty allowlist is the whole catalog: it keeps a profile's extra
+    // bundles out of a focused session. Always-exposed names stay regardless.
+    const allowed = this.settings.catalogTools.length === 0
+      ? undefined
+      : new Set(this.settings.catalogTools)
+    const always = new Set([...this.settings.baseTools, ...this.gateToolNames])
     for (const schema of this.ctx.tools.schemas(agent)) {
       // A hidden tool never enters the catalog, so it can be neither exposed by
       // the base set nor selected later — and a delegation cannot name it.
       if (hidden.has(schema.name)) continue
+      if (allowed !== undefined && !allowed.has(schema.name) && !always.has(schema.name)) continue
       catalog.set(schema.name, {
         name: schema.name,
         description: summarize(schema.description, this.settings.maxDescriptionChars),

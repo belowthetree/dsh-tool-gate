@@ -144,5 +144,11 @@
         # Tools the gate always hides: never in the catalog, never selectable,
         # never selectable for a delegated child.
         hiddenTools: []
+        # Catalog allowlist: only these may be offered (base tools and the gate
+        # tools stay exposed regardless). Empty = every inherited tool, which in
+        # a profile with many bundles means dozens of unrelated entries.
+        catalogTools: [pwsh, bash, subagent, list_agents, send_message, wait_agent,
+          interrupt_agent, job_output, job_list, job_kill, todo_write, ask_user_question,
+          skill, web_search, web_fetch, present]
         # Longest tool description kept in the runtime-context catalog.
         maxDescriptionChars: 160

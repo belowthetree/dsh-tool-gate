@@ -25,7 +25,10 @@ DSH 每一步开始时重新解析工具面：`tools.resolve()` → `systemPromp
 
 目录不是工具调用：它是 `systemPrompt.context` 注册的运行时上下文（`tool-gate:catalog`，`required: true`），只在"本轮还没有选择"时渲染完整目录，选择之后换成一行"本轮已保留 + 其余可选名字"的摘要。
 
-**目录是动态的，不是写死的**：它来自 `ctx.tools.schemas(agent)`——该 agent 从组合里继承到的全部工具注册（全局层 + Preset 层 + 它自己的 scope），所以第三方插件、MCP server、Agent Teams 等 contributed 的工具都会出现；`hiddenTools` 里的名字在快照阶段被剔除。快照在 `agent/created` 时取一次，之后每个用户消息（`agent/inbox/claimed`）会重新取一次并**并入**新增的工具（用"临时 lift restriction → 读 → 重新 commit"的同步窗口），所以会话开始后才连上的 MCP 工具也会在下一轮出现在目录里。工具被移除时不做反向删除：名字会在 `commit` 的 restrictable 过滤里自然失效。
+**目录是动态的，不是写死的**：它来自 `ctx.tools.schemas(agent)`——该 agent 从组合里继承到的全部工具注册（全局层 + Preset 层 + 它自己的 scope），所以第三方插件、MCP server、Agent Teams 等 contributed 的工具都会出现；`hiddenTools` 里的名字在快照阶段被剔除，`catalogTools` 非空时目录只保留其中列出的名字（基础工具与网关工具始终保留）。快照在 `agent/created` 时取一次，之后每个用户消息（`agent/inbox/claimed`）会重新取一次并**并入**新增的工具（用"临时 lift restriction → 读 → 重新 commit"的同步窗口），所以会话开始后才连上的 MCP 工具也会在下一轮出现在目录里。工具被移除时不做反向删除：名字会在 `commit` 的 restrictable 过滤里自然失效。
+
+> 为什么 `catalogTools` 重要：profile 里装了很多 bundle/MCP 时，一个"标准"会话可能有 50+ 个工具；门控只决定**暴露**哪些，不会替你把目录变短。给编码向会话配一个 15 条左右的 allowlist，目录才是可读的，否则模型面对的是整个 profile 的工具清单。
+
 
 ```
 Tool selection (restarts with every user message). Base tools are always exposed; 17 further tools can be kept for this turn:
@@ -53,6 +56,8 @@ the next user message resets the selection and shows this catalog again.
 bundle 的 patch 里还声明了一个 Agent 预设 **Tool Gate**（id `tool-gate`，排在 roster 的 order 20）：一个**编码向的精简组合**（fs / shell / jobs / skill / goal / plan / compaction / subagent / ask-user / todo / web / present），去掉了 office、workflow、subagent-fork、schedule、plugin-manager 等目录噪音。会话选到它就会进入门控。
 
 默认**只门控选了这个预设的会话**；其他预设（standard 等）完全不受影响，并且插件会把 `select_tools` / `delegate` 从这些预设的工具面里隐藏（全局注册的工具必须显式 deny，否则会出现在每个预设里）。
+
+**决定时机**：会话在空白期仍可切换预设，所以 `agent/created` 时只是暂定；每次用户消息（`agent/inbox/claimed`）会按已提交的预设重新判定一次——从 standard 切到 Tool Gate 会安装门控，反向切换会撤下门控并恢复完整工具面。
 
 bundle 自己的设置页在 **Plugins → dsh-tool-gate** 的 `plugins.bundle.config` 位置，提供两个开关，写回该行的 Host config：
 
@@ -91,6 +96,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
         presetId: tool-gate                         # 本 bundle 的预设 id；只门控该预设的会话
         applyToOtherPresets: false                  # true = 其他预设也门控（等同"全局生效"）
         hiddenTools: []                             # 永久隐藏：不进目录、不可选、不可委派
+        catalogTools: [pwsh, subagent, todo_write]  # 目录白名单；空 = 继承到的全部工具
         maxDescriptionChars: 160                    # 目录里每条简介的截断长度（>=24）
 ```
 
@@ -107,7 +113,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
 - **失败即放行**：`restrict` 因某个名字拒绝时先剔除该名字重试，再失败就保持不限制并在工具结果里告警。
 - **子代理默认受控**：所有新 agent 都会装网关；`applyToSubagents: false` 时只门控根会话，但 `delegate` 预留的子代理仍按父代理给的清单受控。
 - **预留子代理不随消息重置**：`delegate` 拉起的子代理，其"本轮保留集"就是父代理给的清单；派发时的那条用户消息（子代理的首条 prompt）不会清空它。子代理仍可自己 `select_tools` 换工具（除非 sealed）。
-- **`hiddenTools`**：名字在快照阶段就被剔除，既不会出现在目录里，也不能被选中或被 `delegate` 指定。
+- **`hiddenTools` / `catalogTools`**：都在快照阶段生效——`hiddenTools` 是黑名单，`catalogTools` 是白名单（空 = 全部）；白名单外的名字既不出现在目录里，也不能被选中或被 `delegate` 指定。
 - **`delegate` 是延迟注册的**：`subagents` 服务可能晚于本插件激活，因此委派工具在服务出现时注册，并把名字补进已安装 agent 的工具面。
 - **不支持撤销**：只有"本轮保留"，没有"保留后立刻收回"；重置只发生在下一个用户消息。
 - **工具数按钮是只读投影**：它在 Host 侧折叠 `request/header`，不回放会话事件；`enabled: false` 时不限制任何工具，只保留按钮。若浏览器半侧从未收到该 projection（例如注册晚于会话打开），刷新一次页面即可。
@@ -119,7 +125,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
 ```sh
 node scripts/build.mjs          # 构建 lib/
 node scripts/build.mjs --noEmit # 只做类型检查
-node tests/all.mjs              # 64 条测试
+node tests/all.mjs              # 66 条测试
 node --check client.js          # 浏览器半侧是手写模块，无构建步骤
 ```
 

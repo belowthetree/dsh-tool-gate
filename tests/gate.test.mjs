@@ -202,11 +202,36 @@ describe('presets', () => {
     assert.deepEqual(harness.visibleNames().sort(), ['edit', 'read', 'select_tools', 'write'])
   })
 
-  it('gates the shipped preset', () => {
-    const harness = createHarness({ tools: TOOLS })
+  it('offers only the allowlisted tools', async () => {
+    const harness = gated({}, { catalogTools: ['web_search'] })
+    const text = catalogOf(harness).text({ agent: harness.agent })
+    assert.match(text, /- web_search:/)
+    assert.doesNotMatch(text, /- web_fetch:/)
+    const select = definitionOf(harness, 'select_tools')
+    const result = await select.execute({ tools: ['web_fetch'] }, exec(harness.agent))
+    assert.match(result, /Rejected "web_fetch"/)
+  })
+
+  it('keeps the base tools offered even when the allowlist omits them', async () => {
+    const harness = gated({}, { catalogTools: ['web_search'] })
+    assert.ok(harness.visibleNames().includes('read'))
+    assert.ok(!harness.visibleNames().includes('web_fetch'))
+  })
+
+  it('re-decides the preset when a user message arrives', () => {
+    let preset = 'standard'
+    const harness = createHarness({ tools: TOOLS, presets: { presetForSession: () => preset } })
     apply(harness.ctx, Config({}))
     harness.emit('agent/created', { agent: harness.agent })
-    assert.ok(harness.visibleNames().includes('select_tools'))
+    assert.ok(!harness.visibleNames().includes('select_tools'))
+
+    preset = 'tool-gate'
+    harness.claim(harness.agent, userMessage)
+    assert.deepEqual(harness.visibleNames().sort(), ['edit', 'read', 'select_tools', 'write'])
+
+    preset = 'standard'
+    harness.claim(harness.agent, userMessage)
+    assert.ok(!harness.visibleNames().includes('select_tools'))
   })
 
   it('offers a tool registered after the agent started on the next turn', async () => {
