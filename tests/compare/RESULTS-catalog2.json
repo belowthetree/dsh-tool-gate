@@ -1,0 +1,2927 @@
+{
+  "label": "catalog2",
+  "generatedAt": "2026-11-14T09:25:48.644Z",
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "fixture": "E:\\Project\\dsh-plugins\\dsh-channel-manager",
+  "arms": [
+    "control",
+    "gated",
+    "gated-root",
+    "delegate-only"
+  ],
+  "tasks": [
+    "rows",
+    "qrbind",
+    "provider",
+    "toolkit-notes",
+    "arch-split"
+  ],
+  "rows": [
+    {
+      "ok": true,
+      "arm": "control",
+      "task": "rows",
+      "finished": true,
+      "elapsedMs": 41069,
+      "gateCalls": {
+        "select": 0,
+        "delegate": 0,
+        "subagent": 1,
+        "subagentFork": 0
+      },
+      "selectRequests": [],
+      "delegateRequests": [],
+      "surfaceAdditions": [],
+      "root": {
+        "steps": 4,
+        "turns": 1,
+        "toolCalls": [
+          "subagent",
+          "read",
+          "wait_agent"
+        ],
+        "usage": {
+          "uncachedInput": 8109,
+          "cacheRead": 19968,
+          "cacheWrite": 0,
+          "output": 1105,
+          "reasoning": 0,
+          "billedInput": 28077,
+          "total": 29182
+        },
+        "firstSurface": {
+          "count": 23,
+          "bytes": 17796,
+          "names": [
+            "create_goal",
+            "edit",
+            "get_goal",
+            "glob",
+            "grep",
+            "job_kill",
+            "job_list",
+            "job_output",
+            "list_agents",
+            "read",
+            "read_image",
+            "send_message",
+            "skill",
+            "subagent",
+            "subagent_fork",
+            "todo_write",
+            "update_goal",
+            "wait_agent",
+            "web_fetch",
+            "web_search",
+            "workflow",
+            "working_directory",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 23,
+        "runtimeContexts": 1,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 3,
+        "toolCalls": 2,
+        "sessions": [
+          {
+            "id": "941e20a7-d8d7-4e97-9e79-25e56bee5774",
+            "steps": 3,
+            "toolCalls": 2,
+            "toolCallNames": [
+              "glob",
+              "read"
+            ],
+            "headerCounts": [
+              23
+            ],
+            "usage": {
+              "uncachedInput": 7546,
+              "cacheRead": 13056,
+              "cacheWrite": 0,
+              "output": 822,
+              "reasoning": 0,
+              "billedInput": 20602,
+              "total": 21424
+            },
+            "surface": {
+              "count": 23,
+              "bytes": 17796,
+              "names": [
+                "create_goal",
+                "edit",
+                "get_goal",
+                "glob",
+                "grep",
+                "job_kill",
+                "job_list",
+                "job_output",
+                "list_agents",
+                "read",
+                "read_image",
+                "send_message",
+                "skill",
+                "subagent",
+                "subagent_fork",
+                "todo_write",
+                "update_goal",
+                "wait_agent",
+                "web_fetch",
+                "web_search",
+                "workflow",
+                "working_directory",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "Read the whole file (42 lines). Results below.  ## Inserted loader rows  - `channel-manager → dsh-channel-manager` - `channel-manager-qqbot → dsh-channel-manager/channels/qqbot`  Both inserted rows ca…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 48679,
+        "uncachedInput": 15655,
+        "cacheRead": 33024,
+        "cacheWrite": 0,
+        "output": 1927,
+        "reasoning": 0,
+        "total": 50606
+      },
+      "grade": {
+        "completed": true,
+        "note": "both rows and both package names present"
+      },
+      "answer": "已派子代理 `patch-inspector` 检查完毕。它的结论原样如下：  ## Inserted loader rows  - `channel-manager → dsh-channel-manager` - `channel-manager-qqbot → dsh-channel-manager/channels/qqbot`  Both inserted rows carry an `id` and a `name`; neither is missing either field, so no ambiguity note is needed.  ## Verification note  Source: `cordis.patch.yml` in the project directory, top-level key `insert` (line 13) — the fi…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\control-rows"
+    },
+    {
+      "ok": true,
+      "arm": "gated",
+      "task": "rows",
+      "finished": true,
+      "elapsedMs": 45897,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "wait_agent",
+          "list_agents",
+          "send_message"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "glob",
+            "grep"
+          ],
+          "sealed": false
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "send_message",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 4,
+        "turns": 1,
+        "toolCalls": [
+          "delegate",
+          "select_tools",
+          "wait_agent"
+        ],
+        "usage": {
+          "uncachedInput": 5167,
+          "cacheRead": 10368,
+          "cacheWrite": 0,
+          "output": 1263,
+          "reasoning": 0,
+          "billedInput": 15535,
+          "total": 16798
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 8,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 4,
+        "toolCalls": 3,
+        "sessions": [
+          {
+            "id": "tool-gate-c4397c97-35a8-4da5-84b6-7bf8e963e96e",
+            "steps": 4,
+            "toolCalls": 3,
+            "toolCallNames": [
+              "read",
+              "grep",
+              "grep"
+            ],
+            "headerCounts": [
+              5
+            ],
+            "usage": {
+              "uncachedInput": 3994,
+              "cacheRead": 9600,
+              "cacheWrite": 0,
+              "output": 1402,
+              "reasoning": 0,
+              "billedInput": 13594,
+              "total": 14996
+            },
+            "surface": {
+              "count": 5,
+              "bytes": 3955,
+              "names": [
+                "delegate",
+                "glob",
+                "grep",
+                "read",
+                "select_tools"
+              ]
+            },
+            "additions": [],
+            "answer": "**Result — 2 inserted rows:**  - `channel-manager` -> `dsh-channel-manager` - `channel-manager-qqbot` -> `dsh-channel-manager/channels/qqbot`  **Exact section/key:** the patch document is a YAML *sequ…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 29129,
+        "uncachedInput": 9161,
+        "cacheRead": 19968,
+        "cacheWrite": 0,
+        "output": 2665,
+        "reasoning": 0,
+        "total": 31794
+      },
+      "grade": {
+        "completed": true,
+        "note": "both rows and both package names present"
+      },
+      "answer": "子代理已完成。以下是它的结论（原样汇报）：  **结果 — 2 条插入的 row：**  - `channel-manager` -> `dsh-channel-manager` - `channel-manager-qqbot` -> `dsh-channel-manager/channels/qqbot`  **确切的区段与键：** 该 patch 文档是一个 YAML *序列*，其中唯一的项是一个映射，映射中唯一的键是顶层（第 13 行：`- insert:`）的 **`insert`**。它的值是一个包含 2 个元素的 loader row 序列（缩进 4）。此文件中**没有** `loader-rows` / `loaderRows` 键（已用 grep 验证——零匹配）；`insert` 就是该文件自身头部注释所描述的插入区段（“将该包列在 profile 的 `dsh.pro…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-rows"
+    },
+    {
+      "ok": true,
+      "arm": "gated-root",
+      "task": "rows",
+      "finished": true,
+      "elapsedMs": 43508,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "grep"
+          ],
+          "sealed": false
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 4,
+        "turns": 1,
+        "toolCalls": [
+          "delegate",
+          "select_tools",
+          "wait_agent"
+        ],
+        "usage": {
+          "uncachedInput": 4837,
+          "cacheRead": 10880,
+          "cacheWrite": 0,
+          "output": 1291,
+          "reasoning": 0,
+          "billedInput": 15717,
+          "total": 17008
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 3,
+        "toolCalls": 2,
+        "sessions": [
+          {
+            "id": "tool-gate-b8f6d703-d8ce-4968-ad6b-1779a96da2a0",
+            "steps": 3,
+            "toolCalls": 2,
+            "toolCallNames": [
+              "read",
+              "grep"
+            ],
+            "headerCounts": [
+              4
+            ],
+            "usage": {
+              "uncachedInput": 3791,
+              "cacheRead": 5248,
+              "cacheWrite": 0,
+              "output": 744,
+              "reasoning": 0,
+              "billedInput": 9039,
+              "total": 9783
+            },
+            "surface": {
+              "count": 4,
+              "bytes": 3204,
+              "names": [
+                "delegate",
+                "grep",
+                "read",
+                "select_tools"
+              ]
+            },
+            "additions": [],
+            "answer": "**Inserted loader rows found: 2.**  ``` channel-manager → dsh-channel-manager channel-manager-qqbot → dsh-channel-manager/channels/qqbot ```  **How the rows were identified:** the whole file is a sing…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 24756,
+        "uncachedInput": 8628,
+        "cacheRead": 16128,
+        "cacheWrite": 0,
+        "output": 2035,
+        "reasoning": 0,
+        "total": 26791
+      },
+      "grade": {
+        "completed": true,
+        "note": "both rows and both package names present"
+      },
+      "answer": "已派子代理（agent-1）查看完毕。以下是它的结论原样转述：  **插入的 loader row 共 2 条：**  ``` channel-manager → dsh-channel-manager channel-manager-qqbot → dsh-channel-manager/channels/qqbot ```  **判定依据（子代理原话要点）：** 整个文件是单个 YAML 序列条目，唯一键为 `insert:`（第 13 行）；其下嵌套的就是本 patch 插入的 loader row 列表，每项带 `id` 字段和一个 `name` 字段（即该行挂载的包名）。文件里没有其它 patch 键（无 `remove`、`replace`、`patch` 等），`insert:` 列表之外也没有别的 row；第 1–12 行仅为注释，17–27、32–42 行为注释/`con…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-root-rows"
+    },
+    {
+      "ok": true,
+      "arm": "delegate-only",
+      "task": "rows",
+      "finished": true,
+      "elapsedMs": 37633,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "glob",
+            "grep"
+          ],
+          "sealed": false
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 3,
+        "turns": 1,
+        "toolCalls": [
+          "select_tools",
+          "delegate",
+          "wait_agent"
+        ],
+        "usage": {
+          "uncachedInput": 4562,
+          "cacheRead": 7552,
+          "cacheWrite": 0,
+          "output": 1300,
+          "reasoning": 0,
+          "billedInput": 12114,
+          "total": 13414
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 3,
+        "toolCalls": 2,
+        "sessions": [
+          {
+            "id": "tool-gate-9b0da65f-3a79-4f7d-ba4a-75efdb590651",
+            "steps": 3,
+            "toolCalls": 2,
+            "toolCallNames": [
+              "read",
+              "grep"
+            ],
+            "headerCounts": [
+              5
+            ],
+            "usage": {
+              "uncachedInput": 2064,
+              "cacheRead": 7424,
+              "cacheWrite": 0,
+              "output": 525,
+              "reasoning": 0,
+              "billedInput": 9488,
+              "total": 10013
+            },
+            "surface": {
+              "count": 5,
+              "bytes": 3955,
+              "names": [
+                "delegate",
+                "glob",
+                "grep",
+                "read",
+                "select_tools"
+              ]
+            },
+            "additions": [],
+            "answer": "## 结论  该 `cordis.patch.yml` 只有一个顶层补丁条目 `- insert:`（第 13 行），其下是 loader rows 的列表，没有 `delete`/`replace` 或上下文（context）段落。`insert` 列表中恰好有两条 row：  ``` channel-manager → dsh-channel-manager channel-manager-q…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 21602,
+        "uncachedInput": 6626,
+        "cacheRead": 14976,
+        "cacheWrite": 0,
+        "output": 1825,
+        "reasoning": 0,
+        "total": 23427
+      },
+      "grade": {
+        "completed": true,
+        "note": "both rows and both package names present"
+      },
+      "answer": "子代理已完成核查。以下是它给出的结论文本，原样转述：  ## 结论  该 `cordis.patch.yml` 只有一个顶层补丁条目 `- insert:`（第 13 行），其下是 loader rows 的列表，没有 `delete`/`replace` 或上下文（context）段落。`insert` 列表中恰好有两条 row：  ``` channel-manager → dsh-channel-manager channel-manager-qqbot → dsh-channel-manager/channels/qqbot ```  共插入 2 条 loader row。  （补充说明：第一条 `channel-manager` 的 `config` 为空对象 `{}`，其后均为注释示例；第二条 `channel-manager-qqbot` 的 `config` 含 `sand…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\delegate-only-rows"
+    },
+    {
+      "ok": true,
+      "arm": "control",
+      "task": "qrbind",
+      "finished": true,
+      "elapsedMs": 56741,
+      "gateCalls": {
+        "select": 0,
+        "delegate": 0,
+        "subagent": 1,
+        "subagentFork": 0
+      },
+      "selectRequests": [],
+      "delegateRequests": [],
+      "surfaceAdditions": [],
+      "root": {
+        "steps": 3,
+        "turns": 1,
+        "toolCalls": [
+          "subagent",
+          "wait_agent"
+        ],
+        "usage": {
+          "uncachedInput": 2735,
+          "cacheRead": 17536,
+          "cacheWrite": 0,
+          "output": 1732,
+          "reasoning": 0,
+          "billedInput": 20271,
+          "total": 22003
+        },
+        "firstSurface": {
+          "count": 23,
+          "bytes": 17796,
+          "names": [
+            "create_goal",
+            "edit",
+            "get_goal",
+            "glob",
+            "grep",
+            "job_kill",
+            "job_list",
+            "job_output",
+            "list_agents",
+            "read",
+            "read_image",
+            "send_message",
+            "skill",
+            "subagent",
+            "subagent_fork",
+            "todo_write",
+            "update_goal",
+            "wait_agent",
+            "web_fetch",
+            "web_search",
+            "workflow",
+            "working_directory",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 23,
+        "runtimeContexts": 1,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 7,
+        "toolCalls": 12,
+        "sessions": [
+          {
+            "id": "042cd693-7a72-4bef-8787-7ba0d896b9af",
+            "steps": 7,
+            "toolCalls": 12,
+            "toolCallNames": [
+              "working_directory",
+              "glob",
+              "read",
+              "read",
+              "grep",
+              "read",
+              "grep",
+              "read",
+              "grep",
+              "read",
+              "grep",
+              "read"
+            ],
+            "headerCounts": [
+              23
+            ],
+            "usage": {
+              "uncachedInput": 41502,
+              "cacheRead": 148096,
+              "cacheWrite": 0,
+              "output": 2541,
+              "reasoning": 0,
+              "billedInput": 189598,
+              "total": 192139
+            },
+            "surface": {
+              "count": 23,
+              "bytes": 17796,
+              "names": [
+                "create_goal",
+                "edit",
+                "get_goal",
+                "glob",
+                "grep",
+                "job_kill",
+                "job_list",
+                "job_output",
+                "list_agents",
+                "read",
+                "read_image",
+                "send_message",
+                "skill",
+                "subagent",
+                "subagent_fork",
+                "todo_write",
+                "update_goal",
+                "wait_agent",
+                "web_fetch",
+                "web_search",
+                "workflow",
+                "working_directory",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "调查完成，证据链完整。结论如下：  - 文件相对路径：`lib/qq-bind.js` - 导出的创建绑定器函数名：`createQrBinder` - 绑定超时：600000 毫秒（即 10 分钟）（定义位置：`lib/qq-bind.js:23`，常量/字段名：`BIND_TIMEOUT_MS`） - 证据：   - `lib/qq-bind.js:22-23`     ```js     /…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 209869,
+        "uncachedInput": 44237,
+        "cacheRead": 165632,
+        "cacheWrite": 0,
+        "output": 4273,
+        "reasoning": 0,
+        "total": 214142
+      },
+      "grade": {
+        "completed": true,
+        "note": "file and factory named"
+      },
+      "answer": "子代理调查完成，结论原样汇报如下：  - 文件相对路径：`lib/qq-bind.js` - 导出的创建绑定器函数名：`createQrBinder` - 绑定超时：600000 毫秒（即 10 分钟）（定义位置：`lib/qq-bind.js:23`，常量/字段名：`BIND_TIMEOUT_MS`） - 证据：   - `lib/qq-bind.js:22-23`     ```js     /** 扫码绑定默认总超时（毫秒）：超时后二维码作废，状态转 failed。 */     export const BIND_TIMEOUT_MS = 10 * 60 * 1000     ```   - `lib/qq-bind.js:68-77`（唯一创建入口，导出名与 `timeoutMs` 选项）     ```js     export function createQrBinder(…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\control-qrbind"
+    },
+    {
+      "ok": true,
+      "arm": "gated",
+      "task": "qrbind",
+      "finished": true,
+      "elapsedMs": 62665,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "grep",
+            "glob"
+          ],
+          "sealed": false
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 4,
+        "turns": 1,
+        "toolCalls": [
+          "delegate",
+          "select_tools",
+          "wait_agent"
+        ],
+        "usage": {
+          "uncachedInput": 5915,
+          "cacheRead": 10368,
+          "cacheWrite": 0,
+          "output": 1864,
+          "reasoning": 0,
+          "billedInput": 16283,
+          "total": 18147
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 7,
+        "toolCalls": 9,
+        "sessions": [
+          {
+            "id": "tool-gate-c26e7d21-1806-4bb2-a534-3f7c845b991d",
+            "steps": 7,
+            "toolCalls": 9,
+            "toolCallNames": [
+              "grep",
+              "glob",
+              "read",
+              "grep",
+              "grep",
+              "read",
+              "read",
+              "grep",
+              "read"
+            ],
+            "headerCounts": [
+              5
+            ],
+            "usage": {
+              "uncachedInput": 18321,
+              "cacheRead": 76288,
+              "cacheWrite": 0,
+              "output": 2796,
+              "reasoning": 0,
+              "billedInput": 94609,
+              "total": 97405
+            },
+            "surface": {
+              "count": 5,
+              "bytes": 3955,
+              "names": [
+                "delegate",
+                "glob",
+                "grep",
+                "read",
+                "select_tools"
+              ]
+            },
+            "additions": [],
+            "answer": "## 结论  - **相对路径**: `lib/qq-bind.js` - **导出函数名**: `createQrBinder`（**命名导出**，非默认导出；文件同时命名导出常量 `BIND_TIMEOUT_MS` 和函数 `renderBindQr`） - **绑定超时**: **600000 ms = 10 分钟**（`10 * 60 * 1000`），常量名 **`BIND_TIMEOU…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 110892,
+        "uncachedInput": 24236,
+        "cacheRead": 86656,
+        "cacheWrite": 0,
+        "output": 4660,
+        "reasoning": 0,
+        "total": 115552
+      },
+      "grade": {
+        "completed": true,
+        "note": "file and factory named"
+      },
+      "answer": "子代理已返回结论，以下原样汇报：  ## 结论  - **相对路径**: `lib/qq-bind.js` - **导出函数名**: `createQrBinder`（**命名导出**，非默认导出；文件同时命名导出常量 `BIND_TIMEOUT_MS` 和函数 `renderBindQr`） - **绑定超时**: **600000 ms = 10 分钟**（`10 * 60 * 1000`），常量名 **`BIND_TIMEOUT_MS`**，位于 `lib/qq-bind.js` **第 23 行**；binder 选项字段名为 `timeoutMs`（默认取该常量，第 73 行），provider 侧可配置字段为 `bindTimeoutMs`（默认回退 `BIND_TIMEOUT_MS`）  ### 证据 1：源文件与超时常量（`lib/qq-bind.js`）  ```js 2…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-qrbind"
+    },
+    {
+      "ok": true,
+      "arm": "gated-root",
+      "task": "qrbind",
+      "finished": true,
+      "elapsedMs": 57569,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "grep",
+            "glob",
+            "read"
+          ],
+          "sealed": false
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 4,
+        "turns": 1,
+        "toolCalls": [
+          "delegate",
+          "select_tools",
+          "wait_agent"
+        ],
+        "usage": {
+          "uncachedInput": 5097,
+          "cacheRead": 11520,
+          "cacheWrite": 0,
+          "output": 1726,
+          "reasoning": 0,
+          "billedInput": 16617,
+          "total": 18343
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 6,
+        "toolCalls": 9,
+        "sessions": [
+          {
+            "id": "tool-gate-7efc4990-6cac-4c43-97bb-80366c3f3a97",
+            "steps": 6,
+            "toolCalls": 9,
+            "toolCallNames": [
+              "grep",
+              "grep",
+              "read",
+              "grep",
+              "read",
+              "read",
+              "read",
+              "grep",
+              "grep"
+            ],
+            "headerCounts": [
+              5
+            ],
+            "usage": {
+              "uncachedInput": 15284,
+              "cacheRead": 61184,
+              "cacheWrite": 0,
+              "output": 2042,
+              "reasoning": 0,
+              "billedInput": 76468,
+              "total": 78510
+            },
+            "surface": {
+              "count": 5,
+              "bytes": 3955,
+              "names": [
+                "delegate",
+                "glob",
+                "grep",
+                "read",
+                "select_tools"
+              ]
+            },
+            "additions": [],
+            "answer": "## 结论  - 文件路径: lib/qq-bind.js - 导出函数: createQrBinder - 绑定超时: 600000 毫秒（= 10 分钟）（来源: `BIND_TIMEOUT_MS`，可被 provider 配置项 `bindTimeoutMs` 覆盖）  ## 关键证据行  **1. 超时常量定义（默认 10 分钟 = 600000 ms）** ``` lib/qq-bind…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 93085,
+        "uncachedInput": 20381,
+        "cacheRead": 72704,
+        "cacheWrite": 0,
+        "output": 3768,
+        "reasoning": 0,
+        "total": 96853
+      },
+      "grade": {
+        "completed": true,
+        "note": "file and factory named"
+      },
+      "answer": "子代理已完成调查，以下为结论原文：  > ## 结论 > > - 文件路径: `lib/qq-bind.js` > - 导出函数: `createQrBinder` > - 绑定超时: **600000 毫秒（= 10 分钟）**（来源: `BIND_TIMEOUT_MS`，可被 provider 配置项 `bindTimeoutMs` 覆盖） > > ## 关键证据行 > > **1. 超时常量定义（默认 10 分钟 = 600000 ms）** > ``` > lib/qq-bind.js:22  /** 扫码绑定默认总超时（毫秒）：超时后二维码作废，状态转 failed。 */ > lib/qq-bind.js:23  export const BIND_TIMEOUT_MS = 10 * 60 * 1000 > ``` > > **2. 工厂函数导出** > ``` > lib/q…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-root-qrbind"
+    },
+    {
+      "ok": true,
+      "arm": "delegate-only",
+      "task": "qrbind",
+      "finished": true,
+      "elapsedMs": 135249,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "glob",
+            "grep"
+          ],
+          "sealed": false
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 4,
+        "turns": 1,
+        "toolCalls": [
+          "delegate",
+          "select_tools",
+          "wait_agent"
+        ],
+        "usage": {
+          "uncachedInput": 6673,
+          "cacheRead": 9344,
+          "cacheWrite": 0,
+          "output": 1684,
+          "reasoning": 0,
+          "billedInput": 16017,
+          "total": 17701
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 7,
+        "toolCalls": 13,
+        "sessions": [
+          {
+            "id": "tool-gate-f901c338-3bd6-4260-85c9-f5ee8c167394",
+            "steps": 7,
+            "toolCalls": 13,
+            "toolCallNames": [
+              "glob",
+              "glob",
+              "glob",
+              "glob",
+              "grep",
+              "grep",
+              "read",
+              "read",
+              "grep",
+              "grep",
+              "read",
+              "read",
+              "grep"
+            ],
+            "headerCounts": [
+              5
+            ],
+            "usage": {
+              "uncachedInput": 10428,
+              "cacheRead": 34816,
+              "cacheWrite": 0,
+              "output": 2066,
+              "reasoning": 0,
+              "billedInput": 45244,
+              "total": 47310
+            },
+            "surface": {
+              "count": 5,
+              "bytes": 3955,
+              "names": [
+                "delegate",
+                "glob",
+                "grep",
+                "read",
+                "select_tools"
+              ]
+            },
+            "additions": [],
+            "answer": "三点均已通过实际读取代码确认（文件 `lib/qq-bind.js`，共 283 行，模块注释明确写着「QQ 机器人「扫码绑定」状态机（Host 侧）」，导入了 `./qr.js` 生成 SVG，并由 `lib/channels/qqbot.js` 作为默认绑定器使用）。  - 相对路径：lib/qq-bind.js - 导出函数名：`createQrBinder` - 绑定超时：600000 毫…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 61261,
+        "uncachedInput": 17101,
+        "cacheRead": 44160,
+        "cacheWrite": 0,
+        "output": 3750,
+        "reasoning": 0,
+        "total": 65011
+      },
+      "grade": {
+        "completed": true,
+        "note": "file and factory named"
+      },
+      "answer": "子代理已经完成查找，以下是它给出的结论（原样汇报）：  ---  三点都已通过实际读取代码确认。文件 `lib/qq-bind.js` 共 283 行，模块注释明确写着「QQ 机器人「扫码绑定」状态机（Host 侧）」；该文件导入了 `./qr.js` 来生成 SVG，并且 `lib/channels/qqbot.js` 把它用作默认绑定器。  - **相对路径**：`lib/qq-bind.js` - **导出函数名**：`createQrBinder` - **绑定超时**：600000 毫秒，即 10 分钟，表达式为 `10 * 60 * 1000`（位置：`lib/qq-bind.js:23`，常量 `BIND_TIMEOUT_MS`）  依据： - `lib/qq-bind.js:2` — `* QQ 机器人「扫码绑定」状态机（Host 侧）。`（模块用途即 QQ 扫码绑定） -…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\delegate-only-qrbind"
+    },
+    {
+      "ok": true,
+      "arm": "control",
+      "task": "provider",
+      "finished": true,
+      "elapsedMs": 70025,
+      "gateCalls": {
+        "select": 0,
+        "delegate": 0,
+        "subagent": 1,
+        "subagentFork": 0
+      },
+      "selectRequests": [],
+      "delegateRequests": [],
+      "surfaceAdditions": [],
+      "root": {
+        "steps": 4,
+        "turns": 1,
+        "toolCalls": [
+          "subagent",
+          "wait_agent",
+          "read",
+          "read"
+        ],
+        "usage": {
+          "uncachedInput": 9908,
+          "cacheRead": 20864,
+          "cacheWrite": 0,
+          "output": 1953,
+          "reasoning": 0,
+          "billedInput": 30772,
+          "total": 32725
+        },
+        "firstSurface": {
+          "count": 23,
+          "bytes": 17796,
+          "names": [
+            "create_goal",
+            "edit",
+            "get_goal",
+            "glob",
+            "grep",
+            "job_kill",
+            "job_list",
+            "job_output",
+            "list_agents",
+            "read",
+            "read_image",
+            "send_message",
+            "skill",
+            "subagent",
+            "subagent_fork",
+            "todo_write",
+            "update_goal",
+            "wait_agent",
+            "web_fetch",
+            "web_search",
+            "workflow",
+            "working_directory",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 23,
+        "runtimeContexts": 1,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 3,
+        "toolCalls": 2,
+        "sessions": [
+          {
+            "id": "1dbbd08d-cb93-4637-a85e-750b3f27ca68",
+            "steps": 3,
+            "toolCalls": 2,
+            "toolCallNames": [
+              "read",
+              "grep"
+            ],
+            "headerCounts": [
+              23
+            ],
+            "usage": {
+              "uncachedInput": 19689,
+              "cacheRead": 24448,
+              "cacheWrite": 0,
+              "output": 2199,
+              "reasoning": 0,
+              "billedInput": 44137,
+              "total": 46336
+            },
+            "surface": {
+              "count": 23,
+              "bytes": 17796,
+              "names": [
+                "create_goal",
+                "edit",
+                "get_goal",
+                "glob",
+                "grep",
+                "job_kill",
+                "job_list",
+                "job_output",
+                "list_agents",
+                "read",
+                "read_image",
+                "send_message",
+                "skill",
+                "subagent",
+                "subagent_fork",
+                "todo_write",
+                "update_goal",
+                "wait_agent",
+                "web_fetch",
+                "web_search",
+                "workflow",
+                "working_directory",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "已读取 `docs/ARCH.md`（共 425 行）。第 7 节确实存在，标题为「Channel provider 契约（qq-channel 实现）」（L301）。  ## 一、第 7 节原文（L301–L331）关键摘录  L301： ``` ## 7. Channel provider 契约（qq-channel 实现） ```  L303–L309（row B 入口导入的模块，不是注册函…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 74909,
+        "uncachedInput": 29597,
+        "cacheRead": 45312,
+        "cacheWrite": 0,
+        "output": 4152,
+        "reasoning": 0,
+        "total": 79061
+      },
+      "grade": {
+        "completed": true,
+        "note": "registerProvider + start/stop/status/send"
+      },
+      "answer": "子代理 `arch-lookup` 已完成查阅，以下是我的汇报，内容为它的结论原文：  > **① 注册函数名：`registerProvider(provider)`，是 `ChannelManager` 实例（manager）上的方法，不是模块级导出函数**（§6 L124「`registerProvider(provider)` // → disposer；重复 id 抛错」；§1 L13「manager 暴露 `registerProvider(provider)` 扩展点」）。 > > **② 必须方法：`start()`、`stop()`、`status()`、`send({chatKind, chatId, text, msgId?})`**（§7 L313–L321 全部列出；原文未标 required，只列出处；`bindState/startBind/cancelBin…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\control-provider"
+    },
+    {
+      "ok": true,
+      "arm": "gated",
+      "task": "provider",
+      "finished": true,
+      "elapsedMs": 80787,
+      "gateCalls": {
+        "select": 2,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "glob",
+          "grep",
+          "read"
+        ],
+        [
+          "wait_agent",
+          "list_agents",
+          "glob",
+          "grep"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "glob",
+            "grep"
+          ],
+          "sealed": false
+        }
+      ],
+      "surfaceAdditions": [
+        "glob",
+        "grep",
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 5,
+        "turns": 1,
+        "toolCalls": [
+          "select_tools",
+          "delegate",
+          "select_tools",
+          "wait_agent",
+          "grep"
+        ],
+        "usage": {
+          "uncachedInput": 12384,
+          "cacheRead": 14080,
+          "cacheWrite": 0,
+          "output": 2083,
+          "reasoning": 0,
+          "billedInput": 26464,
+          "total": 28547
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 9,
+        "runtimeContexts": 3,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 4,
+        "toolCalls": 4,
+        "sessions": [
+          {
+            "id": "tool-gate-c4017748-e26a-4a35-a2fc-1bd54f5e9f0e",
+            "steps": 4,
+            "toolCalls": 4,
+            "toolCallNames": [
+              "glob",
+              "glob",
+              "read",
+              "grep"
+            ],
+            "headerCounts": [
+              5
+            ],
+            "usage": {
+              "uncachedInput": 14494,
+              "cacheRead": 20736,
+              "cacheWrite": 0,
+              "output": 2803,
+              "reasoning": 0,
+              "billedInput": 35230,
+              "total": 38033
+            },
+            "surface": {
+              "count": 5,
+              "bytes": 3955,
+              "names": [
+                "delegate",
+                "glob",
+                "grep",
+                "read",
+                "select_tools"
+              ]
+            },
+            "additions": [],
+            "answer": "- 文件绝对路径：`E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-provider\\project\\docs\\ARCH.md` - 第 7 节标题原文：`## 7. Channel provider 契约（qq-channel 实现）`  - ① 注册函数名（原文）：`regi…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 61694,
+        "uncachedInput": 26878,
+        "cacheRead": 34816,
+        "cacheWrite": 0,
+        "output": 4886,
+        "reasoning": 0,
+        "total": 66580
+      },
+      "grade": {
+        "completed": true,
+        "note": "registerProvider + start/stop/status/send"
+      },
+      "answer": "已派子代理（`agent-1`，只读工具）查到结果，并已核对该文件原文一致。结论原样如下：  **文件**：`E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-provider\\project\\docs\\ARCH.md` **第 7 节标题原文**：`## 7. Channel provider 契约（qq-channel 实现）`  **① 把 provider 挂进 manager 的注册函数名**：`registerProvider`  原文依据（第 7 节代码块，第 124 行）： ``` registerProvider(provider)            // → disposer；重复 id 抛错 ``` 第 1 节（第 13 行）也写明： > mana…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-provider"
+    },
+    {
+      "ok": true,
+      "arm": "gated-root",
+      "task": "provider",
+      "finished": true,
+      "elapsedMs": 104437,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "wait_agent",
+          "list_agents",
+          "job_output",
+          "job_list"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "glob",
+            "grep"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "job_list",
+        "job_output",
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 5,
+        "turns": 1,
+        "toolCalls": [
+          "delegate",
+          "select_tools",
+          "wait_agent",
+          "read",
+          "read"
+        ],
+        "usage": {
+          "uncachedInput": 13302,
+          "cacheRead": 18176,
+          "cacheWrite": 0,
+          "output": 4504,
+          "reasoning": 0,
+          "billedInput": 31478,
+          "total": 35982
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 9,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 6,
+        "toolCalls": 8,
+        "sessions": [
+          {
+            "id": "tool-gate-2b668c51-3c60-4a73-aadc-92ec10387c5e",
+            "steps": 6,
+            "toolCalls": 8,
+            "toolCallNames": [
+              "glob",
+              "glob",
+              "grep",
+              "read",
+              "grep",
+              "grep",
+              "read",
+              "read"
+            ],
+            "headerCounts": [
+              3
+            ],
+            "usage": {
+              "uncachedInput": 9574,
+              "cacheRead": 20224,
+              "cacheWrite": 0,
+              "output": 2568,
+              "reasoning": 0,
+              "billedInput": 29798,
+              "total": 32366
+            },
+            "surface": {
+              "count": 3,
+              "bytes": 1894,
+              "names": [
+                "glob",
+                "grep",
+                "read"
+              ]
+            },
+            "additions": [],
+            "answer": "## 结论  **① 把 provider 挂进 manager 的注册函数名：`registerProvider(provider)`**（原方法名 `registerProvider`，签名带一个 provider 参数）。  需要说明：第 7 节「Channel provider 契约」**没有划分任何小节**（全文只有 `## 7.` 这一级标题，第 301–331 行内不含 `###` …"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 61276,
+        "uncachedInput": 22876,
+        "cacheRead": 38400,
+        "cacheWrite": 0,
+        "output": 7072,
+        "reasoning": 0,
+        "total": 68348
+      },
+      "grade": {
+        "completed": true,
+        "note": "registerProvider + start/stop/status/send"
+      },
+      "answer": "已让子代理（只给了 read/glob/grep）查找完毕。其返回的结论文本**原样**如下：  > ## 结论 > > **① 把 provider 挂进 manager 的注册函数名：`registerProvider(provider)`**（原方法名 `registerProvider`，签名带一个 provider 参数）。 > > 需要说明：第 7 节「Channel provider 契约」**没有划分任何小节**（全文只有 `## 7.` 这一级标题，第 301–331 行内不含 `###` 子标题或 `7.1/7.2` 编号），因此注册函数并不出现在第 7 节内部；第 7 节只给出了 provider 插件的模块导出 `apply(ctx, config)` 与 `inject = ['channelManager']`。`registerProvider` 这个名字明确…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-root-provider"
+    },
+    {
+      "ok": true,
+      "arm": "delegate-only",
+      "task": "provider",
+      "finished": true,
+      "elapsedMs": 73701,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "glob",
+            "grep"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 5,
+        "turns": 1,
+        "toolCalls": [
+          "delegate",
+          "select_tools",
+          "wait_agent",
+          "read",
+          "read"
+        ],
+        "usage": {
+          "uncachedInput": 10432,
+          "cacheRead": 14592,
+          "cacheWrite": 0,
+          "output": 2884,
+          "reasoning": 0,
+          "billedInput": 25024,
+          "total": 27908
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 5,
+        "toolCalls": 6,
+        "sessions": [
+          {
+            "id": "tool-gate-1dfe0679-f3ba-4137-af76-e8ae1f116f51",
+            "steps": 5,
+            "toolCalls": 6,
+            "toolCallNames": [
+              "grep",
+              "glob",
+              "read",
+              "grep",
+              "read",
+              "read"
+            ],
+            "headerCounts": [
+              3
+            ],
+            "usage": {
+              "uncachedInput": 6139,
+              "cacheRead": 12288,
+              "cacheWrite": 0,
+              "output": 1220,
+              "reasoning": 0,
+              "billedInput": 18427,
+              "total": 19647
+            },
+            "surface": {
+              "count": 3,
+              "bytes": 1894,
+              "names": [
+                "glob",
+                "grep",
+                "read"
+              ]
+            },
+            "additions": [],
+            "answer": "已读完，两个问题都有明确的原文依据。  ## ① 向 manager 注册 provider 的函数名：`registerProvider(provider)`  原文依据：  - `docs/ARCH.md:124`（`lib/manager.js` 的 `ChannelManager` 类接口）：   > `registerProvider(provider)            // → …"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 43451,
+        "uncachedInput": 16571,
+        "cacheRead": 26880,
+        "cacheWrite": 0,
+        "output": 4104,
+        "reasoning": 0,
+        "total": 47555
+      },
+      "grade": {
+        "completed": true,
+        "note": "registerProvider + start/stop/status/send"
+      },
+      "answer": "子代理已完成查阅。下面原样汇报它的结论：  ---  已读完，两个问题都有明确的原文依据。  ## ① 向 manager 注册 provider 的函数名：`registerProvider(provider)`  原文依据：  - `docs/ARCH.md:124`（`lib/manager.js` 的 `ChannelManager` 类接口）：   > `registerProvider(provider)            // → disposer；重复 id 抛错` - 旁证 `docs/ARCH.md:13`（设计目标 5）：   > “manager 暴露 `registerProvider(provider)` 扩展点；QQ 渠道本身就是通过该接口注册的普通 provider（独立 loader row）。”  注意它会返回一个 disposal 函数（dispo…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\delegate-only-provider"
+    },
+    {
+      "ok": true,
+      "arm": "control",
+      "task": "toolkit-notes",
+      "finished": true,
+      "elapsedMs": 212603,
+      "gateCalls": {
+        "select": 0,
+        "delegate": 0,
+        "subagent": 1,
+        "subagentFork": 0
+      },
+      "selectRequests": [],
+      "delegateRequests": [],
+      "surfaceAdditions": [],
+      "root": {
+        "steps": 16,
+        "turns": 1,
+        "toolCalls": [
+          "working_directory",
+          "glob",
+          "read",
+          "glob",
+          "grep",
+          "grep",
+          "read",
+          "read",
+          "subagent",
+          "grep",
+          "read",
+          "wait_agent",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "working_directory",
+          "glob"
+        ],
+        "usage": {
+          "uncachedInput": 21165,
+          "cacheRead": 198656,
+          "cacheWrite": 0,
+          "output": 4454,
+          "reasoning": 0,
+          "billedInput": 219821,
+          "total": 224275
+        },
+        "firstSurface": {
+          "count": 23,
+          "bytes": 17796,
+          "names": [
+            "create_goal",
+            "edit",
+            "get_goal",
+            "glob",
+            "grep",
+            "job_kill",
+            "job_list",
+            "job_output",
+            "list_agents",
+            "read",
+            "read_image",
+            "send_message",
+            "skill",
+            "subagent",
+            "subagent_fork",
+            "todo_write",
+            "update_goal",
+            "wait_agent",
+            "web_fetch",
+            "web_search",
+            "workflow",
+            "working_directory",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 23,
+        "runtimeContexts": 1,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 19,
+        "toolCalls": 25,
+        "sessions": [
+          {
+            "id": "c8dc1332-2982-4131-b8c0-b7e00f175652",
+            "steps": 19,
+            "toolCalls": 25,
+            "toolCallNames": [
+              "working_directory",
+              "glob",
+              "read",
+              "read",
+              "grep",
+              "read",
+              "grep",
+              "grep",
+              "read",
+              "read",
+              "grep",
+              "read",
+              "read",
+              "grep",
+              "read",
+              "grep",
+              "write",
+              "read",
+              "read",
+              "read",
+              "edit",
+              "edit",
+              "read",
+              "edit",
+              "read"
+            ],
+            "headerCounts": [
+              23
+            ],
+            "usage": {
+              "uncachedInput": 34608,
+              "cacheRead": 350336,
+              "cacheWrite": 0,
+              "output": 8991,
+              "reasoning": 0,
+              "billedInput": 384944,
+              "total": 393935
+            },
+            "surface": {
+              "count": 23,
+              "bytes": 17796,
+              "names": [
+                "create_goal",
+                "edit",
+                "get_goal",
+                "glob",
+                "grep",
+                "job_kill",
+                "job_list",
+                "job_output",
+                "list_agents",
+                "read",
+                "read_image",
+                "send_message",
+                "skill",
+                "subagent",
+                "subagent_fork",
+                "todo_write",
+                "update_goal",
+                "wait_agent",
+                "web_fetch",
+                "web_search",
+                "workflow",
+                "working_directory",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "验证完成。文件已通过全文 read-back 与逐字符源码比对。  ## 1. 文件与 read-back 结果  - 绝对路径：`E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\control-toolkit-notes\\project\\docs\\TOOLKIT-NOTES.md` - `…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 604765,
+        "uncachedInput": 55773,
+        "cacheRead": 548992,
+        "cacheWrite": 0,
+        "output": 13445,
+        "reasoning": 0,
+        "total": 618210
+      },
+      "grade": {
+        "completed": true,
+        "note": "notes file carries all three facts"
+      },
+      "answer": "完成。子代理已创建该文件，并且它自己先读回核对、随后我也独立复核了一遍。  ## 文件  `docs/TOOLKIT-NOTES.md`（79 行，新建；`docs/` 原有的 `ARCH.md` 未动，仓库内无其它改动）  ## 三件事的答案  **① `cordis.patch.yml` 两条 loader row 的 `id`**  | 行 | `id` | `name` | | --- | --- | --- | | A | `channel-manager` | `dsh-channel-manager` | | B | `channel-manager-qqbot` | `dsh-channel-manager/channels/qqbot` |  **② provider 注册函数签名** — `lib/manager.js:438`  ```js registerProvi…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\control-toolkit-notes"
+    },
+    {
+      "ok": true,
+      "arm": "gated",
+      "task": "toolkit-notes",
+      "finished": true,
+      "elapsedMs": 153569,
+      "gateCalls": {
+        "select": 2,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "glob",
+          "grep"
+        ],
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "edit",
+            "glob",
+            "grep"
+          ],
+          "sealed": false
+        }
+      ],
+      "surfaceAdditions": [
+        "glob",
+        "grep",
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 10,
+        "turns": 1,
+        "toolCalls": [
+          "select_tools",
+          "glob",
+          "glob",
+          "read",
+          "read",
+          "read",
+          "grep",
+          "read",
+          "read",
+          "grep",
+          "delegate",
+          "select_tools",
+          "wait_agent",
+          "read"
+        ],
+        "usage": {
+          "uncachedInput": 74661,
+          "cacheRead": 172288,
+          "cacheWrite": 0,
+          "output": 4320,
+          "reasoning": 0,
+          "billedInput": 246949,
+          "total": 251269
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "runtimeContexts": 3,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 10,
+        "toolCalls": 12,
+        "sessions": [
+          {
+            "id": "tool-gate-41013b06-5be3-434c-bca7-9fb95b3a507d",
+            "steps": 10,
+            "toolCalls": 12,
+            "toolCallNames": [
+              "read",
+              "read",
+              "grep",
+              "grep",
+              "read",
+              "read",
+              "read",
+              "glob",
+              "write",
+              "read",
+              "edit",
+              "read"
+            ],
+            "headerCounts": [
+              7
+            ],
+            "usage": {
+              "uncachedInput": 17929,
+              "cacheRead": 107264,
+              "cacheWrite": 0,
+              "output": 5739,
+              "reasoning": 0,
+              "billedInput": 125193,
+              "total": 130932
+            },
+            "surface": {
+              "count": 7,
+              "bytes": 5966,
+              "names": [
+                "delegate",
+                "edit",
+                "glob",
+                "grep",
+                "read",
+                "select_tools",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "读回核对通过，未发现其他不一致。最终汇报如下。  ## 完成情况  **文件绝对路径**：`E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-toolkit-notes\\project\\docs\\TOOLKIT-NOTES.md`  **读回核对**：✅ 通过。已用 read 工具…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 372142,
+        "uncachedInput": 92590,
+        "cacheRead": 279552,
+        "cacheWrite": 0,
+        "output": 10059,
+        "reasoning": 0,
+        "total": 382201
+      },
+      "grade": {
+        "completed": true,
+        "note": "notes file carries all three facts"
+      },
+      "answer": "已完成。子代理建好了文档，按要求读回核对通过；我也独立读回复核了一遍。  ## 文件 `docs/TOOLKIT-NOTES.md`（80 行，UTF-8，Markdown，无乱码）  ## 三项事实（已与源码逐项核对）  **① `cordis.patch.yml` 的两条 loader row id** - `channel-manager`（name: `dsh-channel-manager`） - `channel-manager-qqbot`（name: `dsh-channel-manager/channels/qqbot`）  **② provider 注册函数签名** `ChannelManager.registerProvider(provider)`，定义于 `lib/manager.js:438`： - 必要字段：`id`（非空字符串）、`start`、`stop`…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-toolkit-notes"
+    },
+    {
+      "ok": true,
+      "arm": "gated-root",
+      "task": "toolkit-notes",
+      "finished": true,
+      "elapsedMs": 157568,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "glob",
+          "grep",
+          "read",
+          "list_agents",
+          "wait_agent"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "glob",
+            "grep",
+            "write"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "glob",
+        "grep",
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 8,
+        "turns": 1,
+        "toolCalls": [
+          "select_tools",
+          "read",
+          "delegate",
+          "grep",
+          "read",
+          "grep",
+          "read",
+          "list_agents",
+          "wait_agent",
+          "read",
+          "grep"
+        ],
+        "usage": {
+          "uncachedInput": 12123,
+          "cacheRead": 57600,
+          "cacheWrite": 0,
+          "output": 3120,
+          "reasoning": 0,
+          "billedInput": 69723,
+          "total": 72843
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 9,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 10,
+        "toolCalls": 16,
+        "sessions": [
+          {
+            "id": "tool-gate-5a50bb0e-f8bb-4315-99d8-8660db5516ea",
+            "steps": 10,
+            "toolCalls": 16,
+            "toolCallNames": [
+              "glob",
+              "glob",
+              "glob",
+              "glob",
+              "read",
+              "grep",
+              "read",
+              "grep",
+              "read",
+              "read",
+              "read",
+              "read",
+              "grep",
+              "read",
+              "write",
+              "read"
+            ],
+            "headerCounts": [
+              4
+            ],
+            "usage": {
+              "uncachedInput": 72527,
+              "cacheRead": 182016,
+              "cacheWrite": 0,
+              "output": 7613,
+              "reasoning": 0,
+              "billedInput": 254543,
+              "total": 262156
+            },
+            "surface": {
+              "count": 4,
+              "bytes": 2751,
+              "names": [
+                "glob",
+                "grep",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "核对完成：文件存在，且已用 read 工具完整读回 66 行，三条结论与源码逐条一致。  ## (a) 文件路径  - 相对路径：`docs/TOOLKIT-NOTES.md` - 绝对路径：`E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-root-toolkit-notes\\…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 324266,
+        "uncachedInput": 84650,
+        "cacheRead": 239616,
+        "cacheWrite": 0,
+        "output": 10733,
+        "reasoning": 0,
+        "total": 334999
+      },
+      "grade": {
+        "completed": true,
+        "note": "notes file carries all three facts"
+      },
+      "answer": "已完成。子代理 `agent-1`（工具集被固定为 read/glob/grep/write，无法解锁别的工具）建好文件并回读核对，我也独立复核了一遍。  ## 产出 `docs/TOOLKIT-NOTES.md`（66 行，绝对路径 `…\\gated-root-toolkit-notes\\project\\docs\\TOOLKIT-NOTES.md`），仅新建这一个文件，未改动仓库其他内容。  ## 三项结论（均带出处） 1. **两条 loader row 的 id**    - `channel-manager`（Row A，`name: dsh-channel-manager`）— `cordis.patch.yml:14`    - `channel-manager-qqbot`（Row B，`name: dsh-channel-manager/channels/qqbot`）— …",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-root-toolkit-notes"
+    },
+    {
+      "ok": true,
+      "arm": "delegate-only",
+      "task": "toolkit-notes",
+      "finished": true,
+      "elapsedMs": 163223,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "glob",
+          "grep",
+          "list_agents",
+          "wait_agent"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "glob",
+            "grep",
+            "read",
+            "write"
+          ],
+          "sealed": false
+        }
+      ],
+      "surfaceAdditions": [
+        "glob",
+        "grep",
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 11,
+        "turns": 1,
+        "toolCalls": [
+          "select_tools",
+          "read",
+          "glob",
+          "read",
+          "read",
+          "grep",
+          "grep",
+          "read",
+          "read",
+          "delegate",
+          "wait_agent",
+          "read",
+          "read",
+          "read",
+          "glob"
+        ],
+        "usage": {
+          "uncachedInput": 14795,
+          "cacheRead": 91008,
+          "cacheWrite": 0,
+          "output": 3566,
+          "reasoning": 0,
+          "billedInput": 105803,
+          "total": 109369
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 9,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 10,
+        "toolCalls": 17,
+        "sessions": [
+          {
+            "id": "tool-gate-311b76d8-d4c9-4f86-bf0d-fe1b17e100ce",
+            "steps": 10,
+            "toolCalls": 17,
+            "toolCallNames": [
+              "glob",
+              "read",
+              "grep",
+              "grep",
+              "read",
+              "read",
+              "read",
+              "grep",
+              "write",
+              "read",
+              "glob",
+              "grep",
+              "grep",
+              "write",
+              "read",
+              "glob",
+              "grep"
+            ],
+            "headerCounts": [
+              6
+            ],
+            "usage": {
+              "uncachedInput": 21068,
+              "cacheRead": 92544,
+              "cacheWrite": 0,
+              "output": 8512,
+              "reasoning": 0,
+              "billedInput": 113612,
+              "total": 122124
+            },
+            "surface": {
+              "count": 6,
+              "bytes": 4812,
+              "names": [
+                "delegate",
+                "glob",
+                "grep",
+                "read",
+                "select_tools",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "已完成，报告如下。  ## 写入的文件（绝对路径）  ``` E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\delegate-only-toolkit-notes\\project\\docs\\TOOLKIT-NOTES.md ```  仅新建该文件，未修改任何其他文件。`glob docs/…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 219415,
+        "uncachedInput": 35863,
+        "cacheRead": 183552,
+        "cacheWrite": 0,
+        "output": 12078,
+        "reasoning": 0,
+        "total": 231493
+      },
+      "grade": {
+        "completed": true,
+        "note": "notes file carries all three facts"
+      },
+      "answer": "完成。子代理已新建 `docs/TOOLKIT-NOTES.md`，读回核对通过，我也独立复核了一遍内容。  **文件** `E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\delegate-only-toolkit-notes\\project\\docs\\TOOLKIT-NOTES.md`（112 行；`docs/` 下现为 `ARCH.md` + `TOOLKIT-NOTES.md`，未改动其他文件）  **三项内容（我逐条对照源码确认无误）**  1. `cordis.patch.yml` 两条 loader row 的 id：    - `channel-manager`（name `dsh-channel-manager`，第 14–15 行）    - `channel-m…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\delegate-only-toolkit-notes"
+    },
+    {
+      "ok": true,
+      "arm": "control",
+      "task": "arch-split",
+      "finished": true,
+      "elapsedMs": 240068,
+      "gateCalls": {
+        "select": 0,
+        "delegate": 0,
+        "subagent": 1,
+        "subagentFork": 0
+      },
+      "selectRequests": [],
+      "delegateRequests": [],
+      "surfaceAdditions": [],
+      "root": {
+        "steps": 9,
+        "turns": 2,
+        "toolCalls": [
+          "working_directory",
+          "glob",
+          "read",
+          "grep",
+          "todo_write",
+          "subagent",
+          "read",
+          "read",
+          "glob",
+          "grep",
+          "todo_write"
+        ],
+        "usage": {
+          "uncachedInput": 41354,
+          "cacheRead": 183552,
+          "cacheWrite": 0,
+          "output": 9938,
+          "reasoning": 0,
+          "billedInput": 224906,
+          "total": 234844
+        },
+        "firstSurface": {
+          "count": 23,
+          "bytes": 17796,
+          "names": [
+            "create_goal",
+            "edit",
+            "get_goal",
+            "glob",
+            "grep",
+            "job_kill",
+            "job_list",
+            "job_output",
+            "list_agents",
+            "read",
+            "read_image",
+            "send_message",
+            "skill",
+            "subagent",
+            "subagent_fork",
+            "todo_write",
+            "update_goal",
+            "wait_agent",
+            "web_fetch",
+            "web_search",
+            "workflow",
+            "working_directory",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 23,
+        "runtimeContexts": 1,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          },
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 10,
+        "toolCalls": 15,
+        "sessions": [
+          {
+            "id": "9aeae19e-7700-40c6-bb55-8f75e9a35683",
+            "steps": 10,
+            "toolCalls": 15,
+            "toolCallNames": [
+              "read",
+              "working_directory",
+              "read",
+              "glob",
+              "grep",
+              "write",
+              "edit",
+              "read",
+              "read",
+              "grep",
+              "grep",
+              "grep",
+              "grep",
+              "read",
+              "read"
+            ],
+            "headerCounts": [
+              23
+            ],
+            "usage": {
+              "uncachedInput": 21437,
+              "cacheRead": 120704,
+              "cacheWrite": 0,
+              "output": 8695,
+              "reasoning": 0,
+              "billedInput": 142141,
+              "total": 150836
+            },
+            "surface": {
+              "count": 23,
+              "bytes": 17796,
+              "names": [
+                "create_goal",
+                "edit",
+                "get_goal",
+                "glob",
+                "grep",
+                "job_kill",
+                "job_list",
+                "job_output",
+                "list_agents",
+                "read",
+                "read_image",
+                "send_message",
+                "skill",
+                "subagent",
+                "subagent_fork",
+                "todo_write",
+                "update_goal",
+                "wait_agent",
+                "web_fetch",
+                "web_search",
+                "workflow",
+                "working_directory",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "## 完成情况  只改了 2 个文件，未 commit，未动 `lib/`、`package.json`、README 或其它章节。  ### 1. 新建 `docs/PROVIDER.md`（39 行）  内容 = 原标题第 7 节全文（qqbot 入口代码块 + provider 对象代码块逐字搬运 + 8 条实现要点逐字保留），仅新增 3 个中性二级小标题、1 句由代码块直接推出的引言和来源…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 367047,
+        "uncachedInput": 62791,
+        "cacheRead": 304256,
+        "cacheWrite": 0,
+        "output": 18633,
+        "reasoning": 0,
+        "total": 385680
+      },
+      "grade": {
+        "completed": true,
+        "note": "provider doc + back-link present"
+      },
+      "answer": "完成了。子代理 `doc-splitter` 做完后自己读回确认过，我又独立把两个文件完整读了一遍复核。  ## 改动结果  **1. 新建 `docs/PROVIDER.md`（39 行）** - 第 7 节正文整体迁入：`lib/channels/qqbot.js` 入口代码块（`name` / `inject` / `apply`）+ provider 对象代码块 + 原有 8 条实现要点（入站转发、凭据解析顺序、`credentials/reference-updated` 重连、不自动连接、网关参考、消息转文本、分片、禁止命令解析/授权）。 - 五个要点逐字保留，代码块内为：   - `id: 'qqbot'`   - `title: 'QQ 机器人'`   - `async start()` / `async stop()` / `status()` / `async send…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\control-arch-split"
+    },
+    {
+      "ok": true,
+      "arm": "gated",
+      "task": "arch-split",
+      "finished": true,
+      "elapsedMs": 152928,
+      "gateCalls": {
+        "select": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "edit"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 6,
+        "turns": 1,
+        "toolCalls": [
+          "read",
+          "delegate",
+          "select_tools",
+          "wait_agent",
+          "read",
+          "read"
+        ],
+        "usage": {
+          "uncachedInput": 35284,
+          "cacheRead": 56192,
+          "cacheWrite": 0,
+          "output": 3310,
+          "reasoning": 0,
+          "billedInput": 91476,
+          "total": 94786
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "runtimeContexts": 2,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 9,
+        "toolCalls": 8,
+        "sessions": [
+          {
+            "id": "tool-gate-6513088e-9dee-4185-a64c-95dd2ff8db44",
+            "steps": 9,
+            "toolCalls": 8,
+            "toolCallNames": [
+              "read",
+              "write",
+              "edit",
+              "read",
+              "read",
+              "edit",
+              "read",
+              "read"
+            ],
+            "headerCounts": [
+              3
+            ],
+            "usage": {
+              "uncachedInput": 18254,
+              "cacheRead": 136192,
+              "cacheWrite": 0,
+              "output": 13744,
+              "reasoning": 0,
+              "billedInput": 154446,
+              "total": 168190
+            },
+            "surface": {
+              "count": 3,
+              "bytes": 2451,
+              "names": [
+                "edit",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "已完成。以下是汇报。  ## 一、文件写入结果  | 文件 | 状态 | 大小 | | --- | --- | --- | | `docs/PROVIDER.md` | ✅ 新建成功 | 31 行 | | `docs/ARCH.md` | ✅ 修改成功（仅插入 1 行，无删除） | 426 行（原 425 行，+1 行） |  ## 二、链接行位置  - `docs/ARCH.md` **第 30…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 245922,
+        "uncachedInput": 53538,
+        "cacheRead": 192384,
+        "cacheWrite": 0,
+        "output": 17054,
+        "reasoning": 0,
+        "total": 262976
+      },
+      "grade": {
+        "completed": true,
+        "note": "provider doc + back-link present"
+      },
+      "answer": "已完成，两个文件均已由子代理写入并读回核对，我也亲自复核了一遍。  ## 结果  **新建 `docs/PROVIDER.md`（31 行）** - 由 `docs/ARCH.md` 第 7 节完整整理而成，标题为 `# Channel provider 契约`。 - provider 对象的 `id: 'qqbot'`、`title: 'QQ 机器人'` 原样保留。 - `start` / `stop` / `status` / `send` 四个方法及其注释、返回结构完整保留：   - `start()`：凭据解析顺序（credential ref → row config → 环境变量），失败 throw   - `stop()`：断开、幂等   - `status()`：`{ state:'stopped'|'starting'|'connected'|'error', detai…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-arch-split"
+    },
+    {
+      "ok": true,
+      "arm": "gated-root",
+      "task": "arch-split",
+      "finished": true,
+      "elapsedMs": 191488,
+      "gateCalls": {
+        "select": 2,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "glob",
+          "grep",
+          "subagent",
+          "list_agents"
+        ],
+        [
+          "glob",
+          "grep",
+          "list_agents",
+          "subagent",
+          "wait_agent"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "edit"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "glob",
+        "grep",
+        "list_agents",
+        "subagent",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 8,
+        "turns": 1,
+        "toolCalls": [
+          "read",
+          "select_tools",
+          "list_agents",
+          "glob",
+          "delegate",
+          "select_tools",
+          "list_agents",
+          "wait_agent",
+          "read",
+          "read",
+          "glob",
+          "grep"
+        ],
+        "usage": {
+          "uncachedInput": 89522,
+          "cacheRead": 62592,
+          "cacheWrite": 0,
+          "output": 6192,
+          "reasoning": 0,
+          "billedInput": 152114,
+          "total": 158306
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 10,
+        "runtimeContexts": 3,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 6,
+        "toolCalls": 6,
+        "sessions": [
+          {
+            "id": "tool-gate-232d0820-a50d-4d29-a8ea-7c33db935cfb",
+            "steps": 6,
+            "toolCalls": 6,
+            "toolCallNames": [
+              "read",
+              "read",
+              "write",
+              "edit",
+              "read",
+              "read"
+            ],
+            "headerCounts": [
+              3
+            ],
+            "usage": {
+              "uncachedInput": 23292,
+              "cacheRead": 78208,
+              "cacheWrite": 0,
+              "output": 9441,
+              "reasoning": 0,
+              "billedInput": 101500,
+              "total": 110941
+            },
+            "surface": {
+              "count": 3,
+              "bytes": 2451,
+              "names": [
+                "edit",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "已完成文档整理，并且只改动了指定的两个文件。  ## 改动内容  ### 1. 新建 `docs/PROVIDER.md`（84 行） - 文件开头注明了来源：「整理自 docs/ARCH.md 第 7 节」，并提供了返回链接 `[docs/ARCH.md](./ARCH.md)`。 - 文件包含 9 个小节，完整整理了第 7 节的契约：   1. 入口 stub：`name`、`inject`、…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 253614,
+        "uncachedInput": 112814,
+        "cacheRead": 140800,
+        "cacheWrite": 0,
+        "output": 15633,
+        "reasoning": 0,
+        "total": 269247
+      },
+      "grade": {
+        "completed": true,
+        "note": "provider doc + back-link present"
+      },
+      "answer": "已完成。子代理 `agent-1` 已按契约改完并通过读回核对，我又独立复读了两个文件确认。  ## 改动  **新建 `docs/PROVIDER.md`**（84 行，9 节） - 注明「整理自 docs/ARCH.md 第 7 节」，并带返回 `ARCH.md` 的链接。 - 完整保留了 provider 对象要点：   - `id: 'qqbot'`   - `title: 'QQ 机器人'`   - `async start()`：凭据三级解析（credentials ref → row config → 环境变量），失败 throw，成功连网关   - `async stop()`：断开、幂等   - `status()`：`{ state:'stopped'|'starting'|'connected'|'error', detail?, error?, connectedA…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\gated-root-arch-split"
+    },
+    {
+      "ok": true,
+      "arm": "delegate-only",
+      "task": "arch-split",
+      "finished": true,
+      "elapsedMs": 121413,
+      "gateCalls": {
+        "select": 2,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "selectRequests": [
+        [
+          "read",
+          "write",
+          "edit",
+          "glob",
+          "grep"
+        ],
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "edit",
+            "grep"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "glob",
+        "grep",
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 6,
+        "turns": 1,
+        "toolCalls": [
+          "read",
+          "select_tools",
+          "delegate",
+          "select_tools",
+          "wait_agent",
+          "read",
+          "read"
+        ],
+        "usage": {
+          "uncachedInput": 41986,
+          "cacheRead": 57088,
+          "cacheWrite": 0,
+          "output": 5378,
+          "reasoning": 0,
+          "billedInput": 99074,
+          "total": 104452
+        },
+        "firstSurface": {
+          "count": 5,
+          "bytes": 4512,
+          "names": [
+            "delegate",
+            "edit",
+            "read",
+            "select_tools",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "runtimeContexts": 3,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 6,
+        "toolCalls": 7,
+        "sessions": [
+          {
+            "id": "tool-gate-a274a4a5-2ba2-4f35-82f6-b5096e512271",
+            "steps": 6,
+            "toolCalls": 7,
+            "toolCallNames": [
+              "read",
+              "write",
+              "edit",
+              "read",
+              "read",
+              "grep",
+              "grep"
+            ],
+            "headerCounts": [
+              4
+            ],
+            "usage": {
+              "uncachedInput": 8797,
+              "cacheRead": 26240,
+              "cacheWrite": 0,
+              "output": 3537,
+              "reasoning": 0,
+              "billedInput": 35037,
+              "total": 38574
+            },
+            "surface": {
+              "count": 4,
+              "bytes": 3154,
+              "names": [
+                "edit",
+                "grep",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "## 完成情况  **新建文件绝对路径：** `E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\delegate-only-arch-split\\project\\docs\\PROVIDER.md`  **ARCH.md 插入行（含行号）：** - 第 303 行：`> provider 契约…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 134111,
+        "uncachedInput": 50783,
+        "cacheRead": 83328,
+        "cacheWrite": 0,
+        "output": 8915,
+        "reasoning": 0,
+        "total": 143026
+      },
+      "grade": {
+        "completed": true,
+        "note": "provider doc + back-link present"
+      },
+      "answer": "已完成，结论如下。  ## 改动内容  **1. 新建 `docs/PROVIDER.md`（35 行）** - 由 `docs/ARCH.md` 第 7 节整理而成，保留入口模块 `lib/channels/qqbot.js`（`name` / `inject` / `apply` 及 `config` 签名），以及 provider 对象的全部契约要点：   - `id: 'qqbot'`   - `title: 'QQ 机器人'`   - `async start()`（凭据解析顺序、失败 throw、成功连网关）   - `async stop()`（断开，幂等）   - `status()`（`stopped` / `starting` / `connected` / `error` 及 `detail`/`error`/`connectedAt`）   - `async sen…",
+      "label": "catalog2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\catalog2\\delegate-only-arch-split"
+    }
+  ]
+}

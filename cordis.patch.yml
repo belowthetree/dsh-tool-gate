@@ -1,0 +1,26 @@
+# dsh-tool-gate is a bundle: this patch is the row list a profile gains by
+# listing the package. Every value below is defaulted by the plugin's Config
+# schema, so a row states only the choices a deployment actually makes.
+- insert:
+    - id: tool-gate
+      name: dsh-tool-gate
+      config:
+        # Tools exposed from the first step of every gated session. A name that
+        # this composition does not provide is ignored, so one list works on
+        # Windows (`pwsh`) and POSIX (`bash`) alike.
+        baseTools: [read, write, edit, pwsh, bash]
+        # Model-facing names of the gate tools. `select_tools` keeps the turn's
+        # selection; `delegate` starts a child with an explicit tool list and is
+        # registered only when the `subagents` service is composed.
+        selectToolName: select_tools
+        delegateToolName: delegate
+        delegateProvider: spawn
+        delegateSealed: false
+        # Whether delegated children are gated too. false = only the root session
+        # is gated; a child started through `delegate` still gets its reservation.
+        applyToSubagents: true
+        # Tools the gate always hides: never in the catalog, never selectable,
+        # never selectable for a delegated child.
+        hiddenTools: []
+        # Longest tool description kept in the runtime-context catalog.
+        maxDescriptionChars: 160

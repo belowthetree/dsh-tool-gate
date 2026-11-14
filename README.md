@@ -1,0 +1,105 @@
+# dsh-tool-gate
+
+把一个很小的基础工具集交给模型；**每个用户消息开始时，运行时上下文给出全部工具的简介**，模型用 `select_tools` 保留本轮需要的工具，直到下一次用户消息。
+
+这套语义是"按轮次"的：
+
+- 新用户消息 → 清空本轮选择 → 下一步只暴露基础工具，并在运行时上下文里列出**所有可保留工具的一行简介**；
+- 模型调用 `select_tools` → 选择**替换**本轮集合 → 这些工具在本轮后续每一步都可用；
+- 下一次用户消息 → 选择重置，目录重新给出。
+
+没有字符串匹配、没有关键词路由：目录是状态，选择是一次工具调用。插件只负责校验名字和应用 `agent.ctx.tools.restrict({ allow })`。
+
+## 为什么"下一步"生效
+
+DSH 每一步开始时重新解析工具面：`tools.resolve()` → `systemPrompt.assemble()` → `agent/pre-step` → 模型请求。所以一次 `select_tools` 里改的限制，会进入下一个 step 的 `resolve`；agent loop 还会把与前一次 `request/header` 的差异写成 `developer/message`（`tool-addition`），模型在同一条请求里既看到工具结果，也看到新工具定义。同一 step 内拿不到新工具是结构性的——请求已经发出去了。
+
+"下一次用户消息才重置"落在 `agent/inbox/claimed` 事件上：它在 claim 用户消息后、本步 `tools.resolve()` 之前同步触发，所以重置对"回复这条消息的那一步"就已生效。插件只认 `role: 'user'` 且 `source.kind === 'user'` 的消息——运行时上下文、子代理回报、steering 注入都不会误触发重置。
+
+## 工具
+
+| 工具 | 何时出现 | 作用 |
+| --- | --- | --- |
+| `select_tools` | 始终 | 用精确工具名替换本轮保留集；未知名字只报告不报错；基础工具列入 `Always available` |
+| `delegate` | 组合里有 `subagents` 服务时 | 起一个子代理并指定它的精确工具清单（父代理预留，子代理首个请求前生效） |
+
+目录不是工具调用：它是 `systemPrompt.context` 注册的运行时上下文（`tool-gate:catalog`，`required: true`），只在"本轮还没有选择"时渲染完整目录，选择之后换成一行"本轮已保留 + 其余可选名字"的摘要。
+
+```
+Tool selection (restarts with every user message). Base tools are always exposed; 17 further tools can be kept for this turn:
+- glob: List files by pattern…
+- web_search: Search the web…
+…
+Call `select_tools` with the names this task needs. They stay exposed for the rest of this turn;
+the next user message resets the selection and shows this catalog again.
+```
+
+## 安装
+
+```sh
+cd E:/Project/dsh-plugins/dsh-tool-gate
+node scripts/build.mjs                      # 生成 lib/，并把用到的 DSH 包链进 node_modules
+pnpm dsh plugin --profile <profile> add E:/Project/dsh-plugins/dsh-tool-gate
+pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装上了
+```
+
+`scripts/build.mjs` 自动定位 DSH 检出（`DSH_CHECKOUT` 优先，其次探 `E:/Project/deepseek-harness` 等），把插件 imports 的 workspace 包以目录链接放进插件自己的 `node_modules`。**出树插件不能指望 profile 提供 `dsh-tools`**，必须自带；链接是幂等的，第二次构建起不再需要写权限。
+
+## 配置
+
+```yaml
+- insert:
+    - id: tool-gate
+      name: dsh-tool-gate
+      config:
+        baseTools: [read, write, edit, pwsh, bash]  # 首步常驻；本组合没有的名字自动忽略
+        selectToolName: select_tools                # 两个工具名都必须匹配 ^[a-z][a-z0-9_]*$ 且互不相同
+        delegateToolName: delegate
+        delegateProvider: spawn                     # 承载委派子代理的后端（subagent provider）
+        delegateSealed: false                       # true = 默认 sealed，子代理不能自己选工具
+        applyToSubagents: true                      # false = 只门控根会话；delegate 预留的子代理仍受控
+        hiddenTools: []                             # 永久隐藏：不进目录、不可选、不可委派
+        maxDescriptionChars: 160                    # 目录里每条简介的截断长度（>=24）
+```
+
+`baseTools` 里带 `pwsh` 和 `bash` 两个条目是刻意的：Windows 组合只有前者、POSIX 组合只有后者，安装时会按实际注册情况过滤。
+
+## 委派：父代理指定子代理的工具
+
+`delegate({ description, prompt, tools, sealed?, cwd? })`：`tools` 是子代理的**完整工具面**（只列它需要的）；`sealed: true` 时连网关工具都不给。实现方式是先 `reserve` 子会话 id 与清单，再 `subagents.startActivation()`；网关在 `agent/created`（串行、早于子代理首个请求）认领预留并装 `restrict({ allow: tools })`。启动失败会释放预留。**不是动态 preset**：子代理继承父的组合，只有工具面不同；预留 id 只有本地后端（默认 `spawn`）支持。
+
+## 边界（有意为之）
+
+- **只作用于继承层**：`restrict` 过滤全局与 Agent Preset 贡献的工具；插件在 `agent.ctx` 自注册的工具不受影响。
+- **取交集**：别的插件也在限制时只能越收越窄。
+- **失败即放行**：`restrict` 因某个名字拒绝时先剔除该名字重试，再失败就保持不限制并在工具结果里告警。
+- **子代理默认受控**：所有新 agent 都会装网关；`applyToSubagents: false` 时只门控根会话，但 `delegate` 预留的子代理仍按父代理给的清单受控。
+- **预留子代理不随消息重置**：`delegate` 拉起的子代理，其"本轮保留集"就是父代理给的清单；派发时的那条用户消息（子代理的首条 prompt）不会清空它。子代理仍可自己 `select_tools` 换工具（除非 sealed）。
+- **`hiddenTools`**：名字在快照阶段就被剔除，既不会出现在目录里，也不能被选中或被 `delegate` 指定。
+- **`delegate` 是延迟注册的**：`subagents` 服务可能晚于本插件激活，因此委派工具在服务出现时注册，并把名字补进已安装 agent 的工具面。
+- **不支持撤销**：只有"本轮保留"，没有"保留后立刻收回"；重置只发生在下一个用户消息。
+- **缓存代价**：每次选择都会让 `request/header` 变化一次并写一条 `developer/message`；支持 `toolUpdate` 的路由不会因此开新 series。
+- **只对新会话生效**：插件热重载不会追溯已经创建的 agent。
+
+## 开发
+
+```sh
+node scripts/build.mjs          # 构建 lib/
+node scripts/build.mjs --noEmit # 只做类型检查
+node tests/all.mjs              # 50 条测试
+```
+
+排查时设 `DSH_TOOL_GATE_DEBUG=1`，插件会把 `install`/`reserve`/`select`/`commit` 的决策打到 stderr。
+
+测试用一个复刻 restriction 语义的内存工具注册表（`tests/support/fake-tools.mjs`），覆盖：安装后只剩基础+网关工具、目录内容、选择替换语义、未知名字不炸、新用户消息重置、非用户消息不重置、`hiddenTools`、`applyToSubagents`、委派清单/delegate 预留/sealed、配置校验。
+
+## 实验：开启 vs 不开启
+
+[tests/compare/](tests/compare/README.md) 是真实模型的 A/B 实验（fixture：`dsh-channel-manager` 的独立副本，四臂：`control` / `gated` / `gated-root` / `delegate-only`）。
+
+**注意**：已有的 [RESULTS-SUMMARY.md](tests/compare/RESULTS-SUMMARY.md) 数据来自上一版设计（`list_tools` + `enable_tools` + 按需解锁）。改成"每轮目录 + `select_tools`"后行为已变，那批数字只能当"工具面缩小 3.6× 且完成度不掉"的参考，不能代表当前实现；要新结论需要重跑：
+
+```sh
+node tests/compare/compare.mjs --tasks=all --arms=control,gated,gated-root,delegate-only --label=catalog
+node tests/compare/report.mjs catalog
+```

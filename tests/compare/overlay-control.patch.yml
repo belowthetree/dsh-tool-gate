@@ -1,0 +1,67 @@
+﻿# Control arm: the shipped `headless` profile on the desktop LLM route.
+#
+# Boots `@deepseek-ai/dsh-base` plus the headless bundle 鈥?no Host, no HTTP
+# server 鈥?on the same provider/model/reasoning effort the desktop profile runs,
+# so the control arm and the gated arm share one provider, one model and one
+# prompt-cache domain. Every row below is either an id-targeted override of a row
+# the base bundle already mounts, or absent (the treatment).
+#
+# Process environment read here (set by run-one.mjs before boot):
+#   DSH_CMP_CREDENTIALS  absolute path of the credential store that resolves the
+#                        route's `apiKeyEnv` reference.
+#   DSH_CMP_ROOT         per-run scratch root (session store lives under it).
+
+- id: headless-runner
+  disabled: true
+
+# One standing root agent. run-one.mjs sends the task prompt to it and waits for
+# its turn to end; any subagent it starts is a separate session.
+- id: agent-loop
+  config:
+    agents:
+      - id: main
+        provider: opencode-go
+        model: deepseek-v4.1-flash
+        reasoningEffort: max
+        cwd: !!js process.cwd()
+
+# The base bundle points this row at `<home>/.credentials.yaml`; each run has its
+# own isolated home, so the real store is named explicitly instead of copied.
+- id: credentials
+  disabled: false
+  config:
+    path: !!js process.env.DSH_CMP_CREDENTIALS
+
+- id: agent-default-model
+  config:
+    provider: opencode-go
+    model: deepseek-v4.1-flash
+    reasoningEffort: max
+
+- id: llm-pi-ai
+  config:
+    providers:
+      opencode-go:
+        apiKeyEnv: OPENCODE_GO_API_KEY
+        models:
+          - id: deepseek-v4.1-flash
+            name: DeepSeek V4.1 Flash
+            contextWindow: 1000000
+            maxTokens: 384000
+            input:
+              - text
+              - image
+
+- id: session-persistence-jsonl
+  config:
+    root: !!js process.env.DSH_CMP_ROOT + '/.sessions'
+
+# Both arms run without a shell. The tasks are filesystem reads, and on this
+# machine `pwsh` reports a Win32 ACL failure (`SetNamedSecurityInfoW failed
+# (Win32 5): grantWrite(...)`), which would make the arms differ for a reason
+# that has nothing to do with tool gating.
+- id: tool-pwsh
+  disabled: true
+
+- id: tool-bash
+  disabled: true

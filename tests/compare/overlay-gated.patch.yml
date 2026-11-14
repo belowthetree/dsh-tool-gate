@@ -1,0 +1,63 @@
+﻿# Gated arm: the control composition plus dsh-tool-gate.
+#
+# Identical to overlay-control.patch.yml except for the insert at the bottom, so
+# a difference between the arms is a difference in the tool surface, never in the
+# profile, the provider, the model or the workspace.
+
+- id: headless-runner
+  disabled: true
+
+- id: agent-loop
+  config:
+    agents:
+      - id: main
+        provider: opencode-go
+        model: deepseek-v4.1-flash
+        reasoningEffort: max
+        cwd: !!js process.cwd()
+
+- id: credentials
+  disabled: false
+  config:
+    path: !!js process.env.DSH_CMP_CREDENTIALS
+
+- id: agent-default-model
+  config:
+    provider: opencode-go
+    model: deepseek-v4.1-flash
+    reasoningEffort: max
+
+- id: llm-pi-ai
+  config:
+    providers:
+      opencode-go:
+        apiKeyEnv: OPENCODE_GO_API_KEY
+        models:
+          - id: deepseek-v4.1-flash
+            name: DeepSeek V4.1 Flash
+            contextWindow: 1000000
+            maxTokens: 384000
+            input:
+              - text
+              - image
+
+- id: session-persistence-jsonl
+  config:
+    root: !!js process.env.DSH_CMP_ROOT + '/.sessions'
+
+- id: tool-pwsh
+  disabled: true
+
+- id: tool-bash
+  disabled: true
+
+- insert:
+    # The plugin under test. The entry is a literal file URL: `!!js` is not
+    # accepted in a module `name:` (the production loader resolves the specifier
+    # before evaluating expressions).
+    - id: tool-gate
+      name: 'file:///E:/Project/dsh-plugins/dsh-tool-gate/lib/index.js'
+      config:
+        baseTools: [read, write, edit, pwsh, bash]
+        delegateProvider: spawn
+        delegateSealed: false

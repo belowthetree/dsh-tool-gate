@@ -1,0 +1,13 @@
+# Scratch space for compare.mjs (fixture copies, isolated homes, session stores,
+# logs). Recreated on every run.
+.compare-run/
+node_modules/
+
+# Intermediate single-run results kept out of history; the meaningful runs are
+# RESULTS-<label>.* and RESULTS-SUMMARY.md.
+RESULTS.json
+RESULTS.md
+RESULTS-debug*
+RESULTS-smoke*
+RESULTS-catalog-smoke*
+RESULTS-demo*

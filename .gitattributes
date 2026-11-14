@@ -1,0 +1,3 @@
+# Source and text artifacts are stored with LF; checked-out files follow the
+# platform only for binaries (there are none today).
+* text=auto eol=lf

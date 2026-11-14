@@ -1,0 +1,1134 @@
+{
+  "label": "complex2",
+  "generatedAt": "2026-11-14T08:15:56.893Z",
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "fixture": "E:\\Project\\dsh-plugins\\dsh-channel-manager",
+  "arms": [
+    "control",
+    "gated",
+    "gated-root",
+    "delegate-only"
+  ],
+  "tasks": [
+    "toolkit-notes",
+    "arch-split"
+  ],
+  "rows": [
+    {
+      "ok": true,
+      "arm": "control",
+      "task": "toolkit-notes",
+      "finished": true,
+      "elapsedMs": 237067,
+      "gateCalls": {
+        "list": 0,
+        "enable": 0,
+        "delegate": 0,
+        "subagent": 1,
+        "subagentFork": 0
+      },
+      "enableRequests": [],
+      "delegateRequests": [],
+      "surfaceAdditions": [],
+      "root": {
+        "steps": 16,
+        "turns": 1,
+        "toolCalls": [
+          "working_directory",
+          "glob",
+          "read",
+          "glob",
+          "grep",
+          "read",
+          "read",
+          "glob",
+          "grep",
+          "read",
+          "read",
+          "grep",
+          "todo_write",
+          "subagent",
+          "read",
+          "glob",
+          "wait_agent",
+          "read",
+          "read",
+          "read",
+          "read",
+          "grep",
+          "read",
+          "read",
+          "edit",
+          "read",
+          "glob",
+          "todo_write"
+        ],
+        "usage": {
+          "uncachedInput": 27547,
+          "cacheRead": 233856,
+          "cacheWrite": 0,
+          "output": 7641,
+          "reasoning": 0,
+          "billedInput": 261403,
+          "total": 269044
+        },
+        "firstSurface": {
+          "count": 23,
+          "bytes": 17796,
+          "names": [
+            "create_goal",
+            "edit",
+            "get_goal",
+            "glob",
+            "grep",
+            "job_kill",
+            "job_list",
+            "job_output",
+            "list_agents",
+            "read",
+            "read_image",
+            "send_message",
+            "skill",
+            "subagent",
+            "subagent_fork",
+            "todo_write",
+            "update_goal",
+            "wait_agent",
+            "web_fetch",
+            "web_search",
+            "workflow",
+            "working_directory",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 23,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 12,
+        "toolCalls": 21,
+        "sessions": [
+          {
+            "id": "e3c25b39-cee0-4347-95dd-65bbab2b06d2",
+            "steps": 12,
+            "toolCalls": 21,
+            "usage": {
+              "uncachedInput": 32130,
+              "cacheRead": 214400,
+              "cacheWrite": 0,
+              "output": 9911,
+              "reasoning": 0,
+              "billedInput": 246530,
+              "total": 256441
+            },
+            "surface": {
+              "count": 23,
+              "bytes": 17796,
+              "names": [
+                "create_goal",
+                "edit",
+                "get_goal",
+                "glob",
+                "grep",
+                "job_kill",
+                "job_list",
+                "job_output",
+                "list_agents",
+                "read",
+                "read_image",
+                "send_message",
+                "skill",
+                "subagent",
+                "subagent_fork",
+                "todo_write",
+                "update_goal",
+                "wait_agent",
+                "web_fetch",
+                "web_search",
+                "workflow",
+                "working_directory",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "## 完成汇报  **文件**：`E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\control-toolkit-notes\\project\\docs\\TOOLKIT-NOTES.md` **实际行数**：108 行（read 工具返回 `total 108 lines`），非空，中文。  ### 三项事实答…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 507933,
+        "uncachedInput": 59677,
+        "cacheRead": 448256,
+        "cacheWrite": 0,
+        "output": 17552,
+        "reasoning": 0,
+        "total": 525485
+      },
+      "grade": {
+        "completed": true,
+        "note": "notes file carries all three facts"
+      },
+      "answer": "已经完成，并且我本人再次核对过。  ## 交付物  `docs/TOOLKIT-NOTES.md`（108 行，新建）。它文档化了 `dsh-channel-manager` 的三个要点：  1. **两条 loader row 的 id**：`cordis.patch.yml`    - Row A：`channel-manager`（name `dsh-channel-manager`，第 14–15 行）    - Row B：`channel-manager-qqbot`（name `dsh-channel-manager/channels/qqbot`，第 29–30 行） 2. **provider 注册函数签名**：`lib/manager.js:438`    ```js    registerProvider(provider) => () => void   // 返回…",
+      "label": "complex2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\control-toolkit-notes"
+    },
+    {
+      "ok": true,
+      "arm": "gated",
+      "task": "toolkit-notes",
+      "finished": true,
+      "elapsedMs": 133814,
+      "gateCalls": {
+        "list": 1,
+        "enable": 2,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "enableRequests": [
+        [
+          "grep",
+          "glob"
+        ],
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "edit",
+            "grep",
+            "glob"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "glob",
+        "grep",
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 9,
+        "turns": 1,
+        "toolCalls": [
+          "list_tools",
+          "read",
+          "enable_tools",
+          "read",
+          "grep",
+          "glob",
+          "read",
+          "read",
+          "delegate",
+          "enable_tools",
+          "wait_agent",
+          "read",
+          "grep"
+        ],
+        "usage": {
+          "uncachedInput": 49553,
+          "cacheRead": 107392,
+          "cacheWrite": 0,
+          "output": 3971,
+          "reasoning": 0,
+          "billedInput": 156945,
+          "total": 160916
+        },
+        "firstSurface": {
+          "count": 6,
+          "bytes": 4991,
+          "names": [
+            "delegate",
+            "edit",
+            "enable_tools",
+            "list_tools",
+            "read",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 10,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 9,
+        "toolCalls": 14,
+        "sessions": [
+          {
+            "id": "tool-gate-24187d46-d86d-45de-b5cc-f1db0b747295",
+            "steps": 9,
+            "toolCalls": 14,
+            "usage": {
+              "uncachedInput": 24616,
+              "cacheRead": 123776,
+              "cacheWrite": 0,
+              "output": 5249,
+              "reasoning": 0,
+              "billedInput": 148392,
+              "total": 153641
+            },
+            "surface": {
+              "count": 5,
+              "bytes": 3905,
+              "names": [
+                "edit",
+                "glob",
+                "grep",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "已完成。仅新建了 `docs/TOOLKIT-NOTES.md` 一个文件，未改动其它任何文件。  ## 文件绝对路径 `E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\gated-toolkit-notes\\project\\docs\\TOOLKIT-NOTES.md`  ## 三件事的确认值（逐条含依据） …"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 305337,
+        "uncachedInput": 74169,
+        "cacheRead": 231168,
+        "cacheWrite": 0,
+        "output": 9220,
+        "reasoning": 0,
+        "total": 314557
+      },
+      "grade": {
+        "completed": true,
+        "note": "notes file carries all three facts"
+      },
+      "answer": "已完成。子代理（`agent-1`）新建了 `docs/TOOLKIT-NOTES.md`，并用 read 工具把文件读回逐条核对后汇报；我随后独立复核了文件与三处源码事实，结果一致。  ## 交付物  - 路径：`E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\gated-toolkit-notes\\project\\docs\\TOOLKIT-NOTES.md` - 状态：新建，46 行，非空；子代理称仅创建此一个文件、未改动其它文件。  ## 三件事的答案  | 事项 | 确认值 | 依据 | | --- | --- | --- | | ① 两条 loader row 的 id | `channel-manager`（row A）、`channel-manager-qqbot`（row B） | `…",
+      "label": "complex2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\gated-toolkit-notes"
+    },
+    {
+      "ok": true,
+      "arm": "gated-root",
+      "task": "toolkit-notes",
+      "finished": true,
+      "elapsedMs": 157415,
+      "gateCalls": {
+        "list": 1,
+        "enable": 2,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "enableRequests": [
+        [
+          "glob",
+          "grep"
+        ],
+        [
+          "wait_agent"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "glob",
+            "grep"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "glob",
+        "grep",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 12,
+        "turns": 1,
+        "toolCalls": [
+          "list_tools",
+          "enable_tools",
+          "glob",
+          "grep",
+          "read",
+          "glob",
+          "grep",
+          "read",
+          "grep",
+          "delegate",
+          "enable_tools",
+          "wait_agent",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "glob"
+        ],
+        "usage": {
+          "uncachedInput": 22481,
+          "cacheRead": 67200,
+          "cacheWrite": 0,
+          "output": 4389,
+          "reasoning": 0,
+          "billedInput": 89681,
+          "total": 94070
+        },
+        "firstSurface": {
+          "count": 6,
+          "bytes": 4991,
+          "names": [
+            "delegate",
+            "edit",
+            "enable_tools",
+            "list_tools",
+            "read",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 9,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 7,
+        "toolCalls": 13,
+        "sessions": [
+          {
+            "id": "tool-gate-e18ec466-a0fa-41f2-a139-794a457c80cb",
+            "steps": 7,
+            "toolCalls": 13,
+            "usage": {
+              "uncachedInput": 34061,
+              "cacheRead": 116352,
+              "cacheWrite": 0,
+              "output": 7157,
+              "reasoning": 0,
+              "billedInput": 150413,
+              "total": 157570
+            },
+            "surface": {
+              "count": 4,
+              "bytes": 2751,
+              "names": [
+                "glob",
+                "grep",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "## (a) 核对结论  三条事实均已写入 `docs/TOOLKIT-NOTES.md`，并且我逐一对照源码复核，结果**全部一致，无需修正**：  1. 两条 loader row 的 `id` 与 `cordis.patch.yml` 逐字一致：`channel-manager`、`channel-manager-qqbot`（大小写与连字符均未改写）。 2. provider 注册函数确为…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 240094,
+        "uncachedInput": 56542,
+        "cacheRead": 183552,
+        "cacheWrite": 0,
+        "output": 11546,
+        "reasoning": 0,
+        "total": 251640
+      },
+      "grade": {
+        "completed": true,
+        "note": "notes file carries all three facts"
+      },
+      "answer": "子代理已完成并汇报，我做了独立复核，全部通过。  ## 结论  **产出文件**：`docs/TOOLKIT-NOTES.md`（58 行，新建；`docs/` 目录下现在只有原有的 `ARCH.md` 和这个新文件）  **三件事均写入且与源码一致**：  | 事 | 内容 | 源码证据（我已亲自核对） | |---|---|---| | ① | 两条 loader row 的 `id`：`channel-manager`（Row A）、`channel-manager-qqbot`（Row B） | `cordis.patch.yml:14`、`:29`，逐字一致 | | ② | `registerProvider(provider)`，定义在 `lib/manager.js:304` 的 `export class ChannelManager` 内；参数 `{ id, title?…",
+      "label": "complex2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\gated-root-toolkit-notes"
+    },
+    {
+      "ok": true,
+      "arm": "delegate-only",
+      "task": "toolkit-notes",
+      "finished": true,
+      "elapsedMs": 165015,
+      "gateCalls": {
+        "list": 2,
+        "enable": 2,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "enableRequests": [
+        [
+          "glob",
+          "grep"
+        ],
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "edit",
+            "glob",
+            "grep"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "glob",
+        "grep",
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 14,
+        "turns": 1,
+        "toolCalls": [
+          "list_tools",
+          "list_tools",
+          "enable_tools",
+          "glob",
+          "glob",
+          "read",
+          "glob",
+          "grep",
+          "grep",
+          "read",
+          "read",
+          "delegate",
+          "enable_tools",
+          "list_agents",
+          "wait_agent",
+          "read",
+          "grep",
+          "read",
+          "grep",
+          "glob"
+        ],
+        "usage": {
+          "uncachedInput": 24199,
+          "cacheRead": 98816,
+          "cacheWrite": 0,
+          "output": 5245,
+          "reasoning": 0,
+          "billedInput": 123015,
+          "total": 128260
+        },
+        "firstSurface": {
+          "count": 6,
+          "bytes": 4991,
+          "names": [
+            "delegate",
+            "edit",
+            "enable_tools",
+            "list_tools",
+            "read",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 10,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 13,
+        "toolCalls": 15,
+        "sessions": [
+          {
+            "id": "tool-gate-426f2059-9ff2-4881-b8e0-3f892db5fbd4",
+            "steps": 13,
+            "toolCalls": 15,
+            "usage": {
+              "uncachedInput": 18655,
+              "cacheRead": 142464,
+              "cacheWrite": 0,
+              "output": 5034,
+              "reasoning": 0,
+              "billedInput": 161119,
+              "total": 166153
+            },
+            "surface": {
+              "count": 5,
+              "bytes": 3905,
+              "names": [
+                "edit",
+                "glob",
+                "grep",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "1. **结论：成功。**  2. **文件绝对路径**：`E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\delegate-only-toolkit-notes\\project\\docs\\TOOLKIT-NOTES.md`    **总行数：78 行**  3. **三件事答案**：    - **row …"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 284134,
+        "uncachedInput": 42854,
+        "cacheRead": 241280,
+        "cacheWrite": 0,
+        "output": 10279,
+        "reasoning": 0,
+        "total": 294413
+      },
+      "grade": {
+        "completed": true,
+        "note": "notes file carries all three facts"
+      },
+      "answer": "已完成。我把新建文档的任务交给子代理，子代理写完后读回自检，我又独立复核了一遍。  ## 交付物 `docs/TOOLKIT-NOTES.md`，共 78 行；新建文件，未改动 `docs/ARCH.md`、`README.md` 或任何源码。  ## 子代理执行情况 - 子代理执行时（`agent-1`）只能用 read、write、edit、glob、grep，并且这些工具被封死（sealed），因此无法扩大权限。 - 写完后，它用 read **完整读回文件**，逐项核对；其间做了 2 次修正并再次读回：补回 `onCredentials` 的 JSDoc 续行，改写第一条 row 关于 `config` 的表述。 - 汇报中给出了读回后的实际行号与文本片段作为证据。  ## 我的独立复核（读回文件并对照源码） | 核对项 | 文档内容 | 源码证据 | 结果 | |---|---|…",
+      "label": "complex2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\delegate-only-toolkit-notes"
+    },
+    {
+      "ok": true,
+      "arm": "control",
+      "task": "arch-split",
+      "finished": true,
+      "elapsedMs": 293971,
+      "gateCalls": {
+        "list": 0,
+        "enable": 0,
+        "delegate": 0,
+        "subagent": 1,
+        "subagentFork": 0
+      },
+      "enableRequests": [],
+      "delegateRequests": [],
+      "surfaceAdditions": [],
+      "root": {
+        "steps": 13,
+        "turns": 1,
+        "toolCalls": [
+          "read",
+          "glob",
+          "todo_write",
+          "subagent",
+          "working_directory",
+          "glob",
+          "wait_agent",
+          "list_agents",
+          "wait_agent",
+          "read",
+          "read",
+          "grep",
+          "glob",
+          "read",
+          "todo_write"
+        ],
+        "usage": {
+          "uncachedInput": 23170,
+          "cacheRead": 244224,
+          "cacheWrite": 0,
+          "output": 5094,
+          "reasoning": 0,
+          "billedInput": 267394,
+          "total": 272488
+        },
+        "firstSurface": {
+          "count": 23,
+          "bytes": 17796,
+          "names": [
+            "create_goal",
+            "edit",
+            "get_goal",
+            "glob",
+            "grep",
+            "job_kill",
+            "job_list",
+            "job_output",
+            "list_agents",
+            "read",
+            "read_image",
+            "send_message",
+            "skill",
+            "subagent",
+            "subagent_fork",
+            "todo_write",
+            "update_goal",
+            "wait_agent",
+            "web_fetch",
+            "web_search",
+            "workflow",
+            "working_directory",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 23,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 18,
+        "toolCalls": 31,
+        "sessions": [
+          {
+            "id": "ad3fa648-58ee-4e9f-a90b-fd59d31a9df5",
+            "steps": 18,
+            "toolCalls": 31,
+            "usage": {
+              "uncachedInput": 53167,
+              "cacheRead": 557952,
+              "cacheWrite": 0,
+              "output": 19479,
+              "reasoning": 0,
+              "billedInput": 611119,
+              "total": 630598
+            },
+            "surface": {
+              "count": 23,
+              "bytes": 17796,
+              "names": [
+                "create_goal",
+                "edit",
+                "get_goal",
+                "glob",
+                "grep",
+                "job_kill",
+                "job_list",
+                "job_output",
+                "list_agents",
+                "read",
+                "read_image",
+                "send_message",
+                "skill",
+                "subagent",
+                "subagent_fork",
+                "todo_write",
+                "update_goal",
+                "wait_agent",
+                "web_fetch",
+                "web_search",
+                "workflow",
+                "working_directory",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "Verification complete. Final state confirmed by reading both files back in full.  ## Result  **Pointer line inserted** into `docs/ARCH.md` at **line 302**, directly under the §7 heading (line 301), wi…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 878513,
+        "uncachedInput": 76337,
+        "cacheRead": 802176,
+        "cacheWrite": 0,
+        "output": 24573,
+        "reasoning": 0,
+        "total": 903086
+      },
+      "grade": {
+        "completed": true,
+        "note": "provider doc + back-link present"
+      },
+      "answer": "已完成。这次只有一个子代理 `provider-doc` 负责改写，我作为 lead 在它结束后又独立读回核实了一遍。  ## 改动内容  **新增 `docs/PROVIDER.md`（115 行）**：从 ARCH.md 第 7 节抽出的 provider 契约，10 个小节：  | 小节 | 内容 | |---|---| | 1 | 模块入口（row B）：`name` / `inject` / `apply(ctx, config)` | | 2 | **provider 对象：`id`、`title`、`start` / `stop` / `status` / `send`** | | 3 | 入站消息路由（`manager.handleInbound` + `send` 闭包） | | 4 | 凭据解析顺序（credential ref → row config → 环境变量）…",
+      "label": "complex2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\control-arch-split"
+    },
+    {
+      "ok": true,
+      "arm": "gated",
+      "task": "arch-split",
+      "finished": true,
+      "elapsedMs": 105982,
+      "gateCalls": {
+        "list": 1,
+        "enable": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "enableRequests": [
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "edit"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 7,
+        "turns": 1,
+        "toolCalls": [
+          "read",
+          "list_tools",
+          "delegate",
+          "enable_tools",
+          "list_agents",
+          "wait_agent",
+          "read",
+          "read"
+        ],
+        "usage": {
+          "uncachedInput": 57977,
+          "cacheRead": 56448,
+          "cacheWrite": 0,
+          "output": 4445,
+          "reasoning": 0,
+          "billedInput": 114425,
+          "total": 118870
+        },
+        "firstSurface": {
+          "count": 6,
+          "bytes": 4991,
+          "names": [
+            "delegate",
+            "edit",
+            "enable_tools",
+            "list_tools",
+            "read",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 8,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 5,
+        "toolCalls": 5,
+        "sessions": [
+          {
+            "id": "tool-gate-798ed658-bbc7-4a36-976f-8e8e23d04cfd",
+            "steps": 5,
+            "toolCalls": 5,
+            "usage": {
+              "uncachedInput": 29255,
+              "cacheRead": 48640,
+              "cacheWrite": 0,
+              "output": 3464,
+              "reasoning": 0,
+              "billedInput": 77895,
+              "total": 81359
+            },
+            "surface": {
+              "count": 3,
+              "bytes": 2451,
+              "names": [
+                "edit",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "两个文件的读回验证均已完成，任务完成。  ## 修改的文件  | 文件 | 操作 | 行数变化 | |---|---|---| | `docs/PROVIDER.md` | 新建（UTF-8，中文） | 0 → 37 行 | | `docs/ARCH.md` | 在第 7 节标题后新增 1 行链接 + 1 个必要空行 | 425 → 427 行 |  ## docs/PROVIDER.md 章节结…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 192320,
+        "uncachedInput": 87232,
+        "cacheRead": 105088,
+        "cacheWrite": 0,
+        "output": 7909,
+        "reasoning": 0,
+        "total": 200229
+      },
+      "grade": {
+        "completed": true,
+        "note": "provider doc + back-link present"
+      },
+      "answer": "已完成，子代理和我都已读回确认。  ## 改动结果  **新建 `docs/PROVIDER.md`（37 行）** - 来源说明：整理自 `docs/ARCH.md` 第 7 节，冲突时以 ARCH.md 为准。 - `## 插件入口`：保留 `name` / `inject` / `apply(ctx, config)` 及 config 形状。 - `## provider 对象`：完整保留 6 个要点 —— `id: 'qqbot'`、`title: 'QQ 机器人'`、`async start()`、`async stop()`、`status()`、`async send({ chatKind, chatId, text, msgId? })`，语义注释未改。 - `## 其余契约要点`：原第 7 节的 8 条要点逐条保留（handleInbound、凭据解析顺序、refere…",
+      "label": "complex2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\gated-arch-split"
+    },
+    {
+      "ok": true,
+      "arm": "gated-root",
+      "task": "arch-split",
+      "finished": true,
+      "elapsedMs": 116357,
+      "gateCalls": {
+        "list": 1,
+        "enable": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "enableRequests": [
+        [
+          "wait_agent"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "edit"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 8,
+        "turns": 1,
+        "toolCalls": [
+          "read",
+          "read",
+          "list_tools",
+          "delegate",
+          "enable_tools",
+          "wait_agent",
+          "read",
+          "read"
+        ],
+        "usage": {
+          "uncachedInput": 39086,
+          "cacheRead": 87040,
+          "cacheWrite": 0,
+          "output": 6072,
+          "reasoning": 0,
+          "billedInput": 126126,
+          "total": 132198
+        },
+        "firstSurface": {
+          "count": 6,
+          "bytes": 4991,
+          "names": [
+            "delegate",
+            "edit",
+            "enable_tools",
+            "list_tools",
+            "read",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 7,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 6,
+        "toolCalls": 6,
+        "sessions": [
+          {
+            "id": "tool-gate-af16b916-037c-425f-b632-feff07f96bf4",
+            "steps": 6,
+            "toolCalls": 6,
+            "usage": {
+              "uncachedInput": 9223,
+              "cacheRead": 27136,
+              "cacheWrite": 0,
+              "output": 3822,
+              "reasoning": 0,
+              "billedInput": 36359,
+              "total": 40181
+            },
+            "surface": {
+              "count": 3,
+              "bytes": 2451,
+              "names": [
+                "edit",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "已完成。改动与读回核对结果如下。  ## 改动摘要  | 文件 | 操作 | 结果 | | --- | --- | --- | | `docs/PROVIDER.md` | 新建（74 行） | 第 7 节契约整理为自包含文档 | | `docs/ARCH.md` | 在第 7 节标题下一行插入 1 行链接 | 425 → 427 行（新增链接行及其空行），其余零改动 |  `docs/ARCH.…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 162485,
+        "uncachedInput": 48309,
+        "cacheRead": 114176,
+        "cacheWrite": 0,
+        "output": 9894,
+        "reasoning": 0,
+        "total": 172379
+      },
+      "grade": {
+        "completed": true,
+        "note": "provider doc + back-link present"
+      },
+      "answer": "子代理已完成，我也做了独立复查，结论无误。  ## 改动结果  **1. 新建 `docs/PROVIDER.md`（74 行）**  内容为第 7 节契约的自包含整理版，结构如下： - 入口模块契约：`name = 'channel-manager-qqbot'`、`inject = ['channelManager']`、`apply(ctx, config)` 及 config 形状 - provider 对象代码块 + 要点表 - 收消息与 `handleInbound` 回调 - 凭据解析顺序与 `credentials/reference-updated` 监听 - 启动语义（不自动连接） - 网关参考与 `sandbox` - QQ 消息转文本规则 - 分片发送规则 - 职责边界（禁止在 provider 内做命令解析/授权）  **2. `docs/ARCH.md` 第 7…",
+      "label": "complex2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\gated-root-arch-split"
+    },
+    {
+      "ok": true,
+      "arm": "delegate-only",
+      "task": "arch-split",
+      "finished": true,
+      "elapsedMs": 194481,
+      "gateCalls": {
+        "list": 1,
+        "enable": 1,
+        "delegate": 1,
+        "subagent": 0,
+        "subagentFork": 0
+      },
+      "enableRequests": [
+        [
+          "wait_agent",
+          "list_agents"
+        ]
+      ],
+      "delegateRequests": [
+        {
+          "tools": [
+            "read",
+            "write",
+            "edit"
+          ],
+          "sealed": true
+        }
+      ],
+      "surfaceAdditions": [
+        "list_agents",
+        "wait_agent"
+      ],
+      "root": {
+        "steps": 11,
+        "turns": 1,
+        "toolCalls": [
+          "read",
+          "read",
+          "write",
+          "read",
+          "list_tools",
+          "delegate",
+          "enable_tools",
+          "list_agents",
+          "wait_agent",
+          "read",
+          "read",
+          "edit",
+          "read",
+          "read"
+        ],
+        "usage": {
+          "uncachedInput": 54031,
+          "cacheRead": 167552,
+          "cacheWrite": 0,
+          "output": 12984,
+          "reasoning": 0,
+          "billedInput": 221583,
+          "total": 234567
+        },
+        "firstSurface": {
+          "count": 6,
+          "bytes": 4991,
+          "names": [
+            "delegate",
+            "edit",
+            "enable_tools",
+            "list_tools",
+            "read",
+            "write"
+          ]
+        },
+        "lastSurfaceCount": 8,
+        "turnEnds": [
+          {
+            "kind": "completed"
+          }
+        ],
+        "errors": []
+      },
+      "children": {
+        "count": 1,
+        "steps": 8,
+        "toolCalls": 8,
+        "sessions": [
+          {
+            "id": "tool-gate-827e0864-7a2b-4f0a-a1bb-0107e109592a",
+            "steps": 8,
+            "toolCalls": 8,
+            "usage": {
+              "uncachedInput": 18178,
+              "cacheRead": 104704,
+              "cacheWrite": 0,
+              "output": 4345,
+              "reasoning": 0,
+              "billedInput": 122882,
+              "total": 127227
+            },
+            "surface": {
+              "count": 3,
+              "bytes": 2451,
+              "names": [
+                "edit",
+                "read",
+                "write"
+              ]
+            },
+            "additions": [],
+            "answer": "已完成，两个文件的最终状态都已重新读取确认。  ## 一、实际改动  | 文件 | 操作 | 位置（最终行号） | | --- | --- | --- | | `docs/PROVIDER.md` | 新建（44 行） | 全文 | | `docs/ARCH.md` | 仅插入 2 行（1 空行 + 1 引用行） | 第 303 行插入 `> provider 契约详见 [PROVIDER.md]…"
+          }
+        ]
+      },
+      "usage": {
+        "billedInput": 344465,
+        "uncachedInput": 72209,
+        "cacheRead": 272256,
+        "cacheWrite": 0,
+        "output": 17329,
+        "reasoning": 0,
+        "total": 361794
+      },
+      "grade": {
+        "completed": true,
+        "note": "provider doc + back-link present"
+      },
+      "answer": "已完成，并做了双重确认：子代理执行后读回了两个文件；我也独立读回复核了一遍。  ## 子代理执行结果  派出的子代理 `agent-1`（工具面 sealed 为仅 `read/write/edit`）完成了拆分，并按要求读回两个文件自检。  ### 1. 新建 `docs/PROVIDER.md`（44 行）  - **模块入口**（第 12–14 行）：保留 `name = 'channel-manager-qqbot'`、`inject = ['channelManager']`、`apply(ctx, config)` 及 config 注释。 - **provider 对象**（第 21–26 行），五个要点一个不少：   - `id: 'qqbot'`（21 行）   - `title: 'QQ 机器人'`（22 行）   - `start()`（23 行）   - `stop…",
+      "label": "complex2",
+      "runDir": "E:\\Project\\dsh-plugins\\dsh-tool-gate\\tests\\compare\\.compare-run\\runs\\delegate-only-arch-split"
+    }
+  ]
+}
