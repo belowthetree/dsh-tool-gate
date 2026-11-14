@@ -51,7 +51,7 @@ describe('registration', () => {
   it('exposes delegate to the root agent like the other gate tools', () => {
     const harness = gated({ subagents: createSubagents() })
     assert.deepEqual(harness.visibleNames().sort(), [
-      'delegate', 'read', 'select_tools', 'write',
+      'delegate', 'glob', 'read', 'select_tools', 'write',
     ])
   })
 })

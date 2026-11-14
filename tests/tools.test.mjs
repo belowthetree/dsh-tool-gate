@@ -67,7 +67,7 @@ describe('custom names', () => {
     const harness = gated({ selectToolName: 'keep_tools' })
     assert.deepEqual(harness.registered.map(definition => definition.name), ['keep_tools'])
     assert.deepEqual(harness.visibleNames().sort(), [
-      'keep_tools', 'pwsh', 'read', 'write',
+      'keep_tools', 'read', 'write',
     ])
   })
 })

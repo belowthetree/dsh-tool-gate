@@ -58,7 +58,7 @@
     - id: tool-gate
       name: 'file:///E:/Project/dsh-plugins/dsh-tool-gate/lib/index.js'
       config:
-        baseTools: [read, write, edit, pwsh, bash]
+        baseTools: [read, write, edit, glob, grep]
         delegateProvider: spawn
         delegateSealed: false
         # Headless arms carry no Agent preset; gate them explicitly.

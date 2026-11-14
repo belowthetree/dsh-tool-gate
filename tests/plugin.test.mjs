@@ -40,7 +40,7 @@ describe('plugin surface', () => {
 describe('Config', () => {
   it('fills every deployment-varying choice', () => {
     const resolved = Config({})
-    assert.deepEqual(resolved.baseTools, ['read', 'write', 'edit', 'pwsh', 'bash'])
+    assert.deepEqual(resolved.baseTools, ['read', 'write', 'edit', 'glob', 'grep'])
     assert.equal(resolved.selectToolName, 'select_tools')
     assert.equal(resolved.delegateToolName, 'delegate')
     assert.equal(resolved.delegateProvider, 'spawn')

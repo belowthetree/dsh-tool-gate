@@ -136,6 +136,10 @@ export function createHarness({ tools = [], header, subagents, projections, pres
     contexts,
     visibleNames,
     /** Dispatch one captured lifecycle event. */
+    /** Register a tool after the harness was built, as a late plugin would. */
+    addTool: (name, description = name + ' appeared later.') => {
+      all.set(name, { name, description })
+    },
     emit: (event, payload) => listeners.get(event)?.(payload),
     /** Dispatch the waterfall `agent/pre-step` and resolve its decision. */
     emitStep: (payload) => {

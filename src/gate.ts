@@ -248,12 +248,48 @@ export class ToolGate {
   startTurn(agent: Agent): void {
     const state = this.states.get(agent)
     if (state === undefined) return
+    // Tools registered after this agent started — a plugin activated later, an
+    // MCP server that connected, a preset row mounted late — were not in the
+    // creation snapshot; merge them so this turn's catalog can offer them.
+    this.refreshCatalog(agent, state)
     // A delegated child's surface was chosen by its parent and must survive the
     // delegation prompt itself — which arrives as a user message.
     if (state.reserved || state.selected.size === 0) return
     state.selected.clear()
     debug(`startTurn agent=${agent.id}: selection cleared`)
     this.commit(agent, state)
+  }
+
+  /**
+   * Merge tools that appeared after the creation snapshot into one agent's
+   * catalog (and into its base set when configured). Removal is deliberately
+   * ignored: a name that left the registry is dropped by `commit`'s
+   * restrictable filter instead of silently rewriting a turn's selection here.
+   * @param agent - the gated agent.
+   * @param state - its live gate state.
+   */
+  private refreshCatalog(agent: Agent, state: GateState): void {
+    // `schemas(agent)` already honors this agent's restriction, so discovering
+    // tools that appeared later needs the pre-restriction view: lift for one
+    // synchronous read and re-install before anything can assemble a request.
+    const lift = state.lift
+    delete state.lift
+    lift?.()
+    try {
+      for (const entry of this.snapshot(agent).values()) {
+        if (!state.catalog.has(entry.name)) {
+          state.catalog.set(entry.name, entry)
+          debug(`catalog+ agent=${agent.id} ${entry.name}`)
+        }
+      }
+      if (!state.reserved) {
+        for (const name of this.settings.baseTools) {
+          if (state.catalog.has(name) && !state.base.includes(name)) state.base.push(name)
+        }
+      }
+    } finally {
+      this.commit(agent, state)
+    }
   }
 
   /** Catalog entries the model may keep, sorted by name. */
@@ -360,7 +396,7 @@ export class ToolGate {
       ]
       for (const entry of available) lines.push(`- ${entry.name}: ${entry.description}`)
       lines.push(
-        `Call \`${this.settings.selectToolName}\` with the names this task needs. They stay exposed for the rest of this turn; `
+        `Call \`${this.settings.selectToolName}\` once with the names this task needs. They stay exposed for the rest of this turn; `
         + 'the next user message resets the selection and shows this catalog again.',
       )
       return lines.join('\n')

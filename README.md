@@ -25,6 +25,8 @@ DSH 每一步开始时重新解析工具面：`tools.resolve()` → `systemPromp
 
 目录不是工具调用：它是 `systemPrompt.context` 注册的运行时上下文（`tool-gate:catalog`，`required: true`），只在"本轮还没有选择"时渲染完整目录，选择之后换成一行"本轮已保留 + 其余可选名字"的摘要。
 
+**目录是动态的，不是写死的**：它来自 `ctx.tools.schemas(agent)`——该 agent 从组合里继承到的全部工具注册（全局层 + Preset 层 + 它自己的 scope），所以第三方插件、MCP server、Agent Teams 等 contributed 的工具都会出现；`hiddenTools` 里的名字在快照阶段被剔除。快照在 `agent/created` 时取一次，之后每个用户消息（`agent/inbox/claimed`）会重新取一次并**并入**新增的工具（用"临时 lift restriction → 读 → 重新 commit"的同步窗口），所以会话开始后才连上的 MCP 工具也会在下一轮出现在目录里。工具被移除时不做反向删除：名字会在 `commit` 的 restrictable 过滤里自然失效。
+
 ```
 Tool selection (restarts with every user message). Base tools are always exposed; 17 further tools can be kept for this turn:
 - glob: List files by pattern…
@@ -48,7 +50,7 @@ the next user message resets the selection and shows this catalog again.
 
 ## 预设与设置
 
-bundle 的 patch 里还声明了一个 Agent 预设 **Tool Gate**（id `tool-gate`，排在 roster 的 order 20）：它的 `plugins` 就是标准预设那套工具组合，区别只在会话会选到这个预设，从而进入门控。
+bundle 的 patch 里还声明了一个 Agent 预设 **Tool Gate**（id `tool-gate`，排在 roster 的 order 20）：一个**编码向的精简组合**（fs / shell / jobs / skill / goal / plan / compaction / subagent / ask-user / todo / web / present），去掉了 office、workflow、subagent-fork、schedule、plugin-manager 等目录噪音。会话选到它就会进入门控。
 
 默认**只门控选了这个预设的会话**；其他预设（standard 等）完全不受影响，并且插件会把 `select_tools` / `delegate` 从这些预设的工具面里隐藏（全局注册的工具必须显式 deny，否则会出现在每个预设里）。
 
@@ -80,7 +82,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
       name: dsh-tool-gate
       config:
         enabled: true                                # false = 只保留工具数按钮，不限制任何工具
-        baseTools: [read, write, edit, pwsh, bash]  # 首步常驻；本组合没有的名字自动忽略
+        baseTools: [read, write, edit, glob, grep]   # 首步常驻；本组合没有的名字自动忽略
         selectToolName: select_tools                # 两个工具名都必须匹配 ^[a-z][a-z0-9_]*$ 且互不相同
         delegateToolName: delegate
         delegateProvider: spawn                     # 承载委派子代理的后端（subagent provider）
@@ -117,7 +119,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
 ```sh
 node scripts/build.mjs          # 构建 lib/
 node scripts/build.mjs --noEmit # 只做类型检查
-node tests/all.mjs              # 63 条测试
+node tests/all.mjs              # 64 条测试
 node --check client.js          # 浏览器半侧是手写模块，无构建步骤
 ```
 

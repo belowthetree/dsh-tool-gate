@@ -6,7 +6,7 @@
       config:
         id: tool-gate
         name: Tool Gate
-        description: Starts from a small base toolset and lets the model keep the tools each turn needs.
+        description: Coding preset with a lean toolset; discovery tools are always on, the rest unlock per turn.
         order: 20
         plugins:
           - id: persona
@@ -36,8 +36,6 @@
               sampleOverCapGlobResults: false
           - id: tool-jobs
             name: '@deepseek-ai/dsh-tool-jobs'
-          - id: tool-schedule
-            name: '@deepseek-ai/dsh-tool-schedule'
           - id: skill-filesystem
             name: '@deepseek-ai/dsh-skill-filesystem'
             config:
@@ -45,8 +43,6 @@
                 - !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('@deepseek-ai/dsh-agent-preset/package.json')), 'skills')
           - id: tool-skill
             name: '@deepseek-ai/dsh-tool-skill'
-          - id: command-goal
-            name: '@deepseek-ai/dsh-command-goal'
           - id: tool-goal
             name: '@deepseek-ai/dsh-tool-goal'
           - id: planning
@@ -104,17 +100,6 @@
                   toolName: subagent
                   modelSelection: true
                   modelDiscovery: true
-              - id: tool-subagent-fork
-                name: '@deepseek-ai/dsh-tool-subagent'
-                config:
-                  provider: fork
-                  toolName: subagent_fork
-              - id: workflow-ptc
-                name: '@deepseek-ai/dsh-workflow-ptc'
-                config:
-                  provider: spawn
-              - id: tool-workflow
-                name: '@deepseek-ai/dsh-tool-workflow'
           - id: tool-ask-user
             name: '@deepseek-ai/dsh-tool-ask-user'
           - id: tool-todo
@@ -128,15 +113,6 @@
               searchTimeoutMs: 60000
           - id: present
             name: '@deepseek-ai/dsh-tool-present'
-          - id: tool-office
-            name: '@deepseek-ai/dsh-tool-office'
-          - id: tool-plugin-manager
-            name: '@deepseek-ai/dsh-plugin-manager/tools'
-            disabled: !!js "!ctx.get('profileContext')"
-          - id: tool-plugin-market
-            name: '@deepseek-ai/dsh-plugin-market/tools'
-            disabled: true
-
 # dsh-tool-gate is a bundle: this patch is the row list a profile gains by
 # listing the package. Every value below is defaulted by the plugin's Config
 # schema, so a row states only the choices a deployment actually makes.
@@ -150,7 +126,7 @@
         # Tools exposed from the first step of every gated session. A name that
         # this composition does not provide is ignored, so one list works on
         # Windows (`pwsh`) and POSIX (`bash`) alike.
-        baseTools: [read, write, edit, pwsh, bash]
+        baseTools: [read, write, edit, glob, grep]
         # Model-facing names of the gate tools. `select_tools` keeps the turn's
         # selection; `delegate` starts a child with an explicit tool list and is
         # registered only when the `subagents` service is composed.

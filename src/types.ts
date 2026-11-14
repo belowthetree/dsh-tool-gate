@@ -11,7 +11,7 @@
  * dropped while the gate is installed, which is what lets one default list cover
  * Windows (`pwsh`) and POSIX (`bash`) deployments.
  */
-export const DEFAULT_BASE_TOOLS: readonly string[] = ['read', 'write', 'edit', 'pwsh', 'bash']
+export const DEFAULT_BASE_TOOLS: readonly string[] = ['read', 'write', 'edit', 'glob', 'grep']
 
 /** Model-facing name of the per-turn selection tool. */
 export const DEFAULT_SELECT_TOOL_NAME = 'select_tools'

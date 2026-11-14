@@ -55,7 +55,7 @@ describe('installation', () => {
   it('exposes the base tools and the selection tool, and nothing else', () => {
     const harness = gated()
     assert.deepEqual(harness.visibleNames().sort(), [
-      'edit', 'pwsh', 'read', 'select_tools', 'write',
+      'edit', 'read', 'select_tools', 'write',
     ])
   })
 
@@ -157,7 +157,7 @@ describe('turn window', () => {
     assert.ok(harness.visibleNames().includes('web_search'))
 
     harness.claim(harness.agent, userMessage)
-    assert.deepEqual(harness.visibleNames().sort(), ['edit', 'pwsh', 'read', 'select_tools', 'write'])
+    assert.deepEqual(harness.visibleNames().sort(), ['edit', 'read', 'select_tools', 'write'])
   })
 
   it('shows the catalog again after the reset', async () => {
@@ -199,7 +199,7 @@ describe('presets', () => {
     })
     apply(harness.ctx, Config({ applyToOtherPresets: true }))
     harness.emit('agent/created', { agent: harness.agent })
-    assert.deepEqual(harness.visibleNames().sort(), ['edit', 'pwsh', 'read', 'select_tools', 'write'])
+    assert.deepEqual(harness.visibleNames().sort(), ['edit', 'read', 'select_tools', 'write'])
   })
 
   it('gates the shipped preset', () => {
@@ -207,6 +207,18 @@ describe('presets', () => {
     apply(harness.ctx, Config({}))
     harness.emit('agent/created', { agent: harness.agent })
     assert.ok(harness.visibleNames().includes('select_tools'))
+  })
+
+  it('offers a tool registered after the agent started on the next turn', async () => {
+    const harness = gated()
+    harness.addTool('late_tool')
+    // The creation snapshot cannot know it; the next user turn refreshes.
+    assert.doesNotMatch(catalogOf(harness).text({ agent: harness.agent }), /late_tool/)
+    harness.claim(harness.agent, userMessage)
+    const select = definitionOf(harness, 'select_tools')
+    const result = await select.execute({ tools: ['late_tool'] }, exec(harness.agent))
+    assert.match(result, /Kept for this turn: late_tool/)
+    assert.ok(harness.visibleNames().includes('late_tool'))
   })
 })
 
@@ -223,7 +235,7 @@ describe('configuration', () => {
   it('leaves delegated children ungated when applyToSubagents is false', () => {
     const harness = gated({ subagents: createSubagents() }, { applyToSubagents: false })
     assert.deepEqual(harness.visibleNames().sort(), [
-      'delegate', 'edit', 'pwsh', 'read', 'select_tools', 'write',
+      'delegate', 'edit', 'read', 'select_tools', 'write',
     ])
     const child = harness.createAgent('child-1')
     harness.emit('agent/created', { agent: child })

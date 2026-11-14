@@ -275,9 +275,11 @@ function policyText(settings: GateSettings, delegate: boolean): string {
     `Exposed from the first step: ${settings.baseTools.join(', ')} and the gate tools \`${settings.selectToolName}\``
       + `${delegate ? ` and \`${settings.delegateToolName}\`` : ''}.`,
     'The runtime context lists the remaining tools with one-line descriptions at the start of every user turn.',
-    `Call \`${settings.selectToolName}\` with the names this task needs; they stay exposed for the rest of the current turn and reset at the next user message. `
-      + 'The call replaces the turn\'s selection, so list everything the turn still needs.',
+    'Use glob, grep, and read for discovery; select the shell only for builds, tests, and one-off commands.',
+    `Call \`${settings.selectToolName}\` once with the names this task needs; they stay exposed for the rest of the current turn and reset at the next user message. `
+      + 'The call replaces the turn\'s selection, so list everything the turn still needs, and do not call it again unless the task changes.',
     `Check that catalog before telling the user that a capability is unavailable, and keep only what the task needs.`,
+    'Remove temporary files you create before you finish.',
   ]
   if (delegate) {
     lines.push(
