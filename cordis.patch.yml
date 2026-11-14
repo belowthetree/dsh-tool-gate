@@ -145,6 +145,10 @@
         # the next user message — but that rewrites the tool surface, and the
         # provider then re-reads the whole prompt uncached.
         resetPerTurn: false
+        # Exposed from step 1 without a selection call. The shell is the common
+        # extra for coding tasks; keeping it here removes the only tool-surface
+        # change a single-turn run would otherwise make.
+        defaultSelection: [pwsh]
         # Tools the gate always hides: never in the catalog, never selectable,
         # never selectable for a delegated child.
         hiddenTools: []

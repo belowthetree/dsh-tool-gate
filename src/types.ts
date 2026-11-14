@@ -65,6 +65,13 @@ export const DEFAULT_MAX_DESCRIPTION_CHARS = 160
  */
 export const DEFAULT_CATALOG_TOOLS: readonly string[] = []
 
+/**
+ * Tools exposed from the first step without the model asking. Kept out of the
+ * catalog and out of the selection step, so the tool surface is stable before
+ * the first request and no later change re-reads the prompt.
+ */
+export const DEFAULT_DEFAULT_SELECTION: readonly string[] = []
+
 /** Fully defaulted settings, frozen once at load. */
 export interface GateSettings {
   /** Base tools requested by the deployment, in configuration order. */
@@ -89,6 +96,8 @@ export interface GateSettings {
   readonly hiddenTools: readonly string[]
   /** Tools the catalog may offer; empty offers every inherited tool. */
   readonly catalogTools: readonly string[]
+  /** Tools exposed from the first step without a selection call. */
+  readonly defaultSelection: readonly string[]
   /** Longest catalog description retained per tool, in characters. */
   readonly maxDescriptionChars: number
 }

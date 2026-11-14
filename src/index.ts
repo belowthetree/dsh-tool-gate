@@ -47,6 +47,7 @@ import {
   DEFAULT_APPLY_TO_OTHER_PRESETS,
   DEFAULT_BASE_TOOLS,
   DEFAULT_CATALOG_TOOLS,
+  DEFAULT_DEFAULT_SELECTION,
   DEFAULT_DELEGATE_PROVIDER,
   DEFAULT_DELEGATE_SEALED,
   DEFAULT_DELEGATE_TOOL_NAME,
@@ -96,6 +97,8 @@ export interface Config {
   hiddenTools?: string[]
   /** Optional catalog allowlist; empty offers every inherited tool. */
   catalogTools?: string[]
+  /** Tools exposed from the first step without a selection call (e.g. the shell). */
+  defaultSelection?: string[]
   /** Longest catalog description retained per tool. */
   maxDescriptionChars?: number
 }
@@ -114,6 +117,7 @@ export const Config: z<Config> = z.object({
   resetPerTurn: z.boolean().default(DEFAULT_RESET_PER_TURN),
   hiddenTools: z.array(z.string()).default([]),
   catalogTools: z.array(z.string()).default([...DEFAULT_CATALOG_TOOLS]),
+  defaultSelection: z.array(z.string()).default([...DEFAULT_DEFAULT_SELECTION]),
   maxDescriptionChars: z.number().default(DEFAULT_MAX_DESCRIPTION_CHARS),
 })
 
@@ -160,6 +164,7 @@ export function apply(ctx: Context, config: Config): void {
     resetPerTurn: resolved.resetPerTurn,
     hiddenTools: [...resolved.hiddenTools],
     catalogTools: [...resolved.catalogTools],
+    defaultSelection: [...resolved.defaultSelection],
     maxDescriptionChars: resolved.maxDescriptionChars,
   }
 
@@ -317,16 +322,16 @@ function policyText(settings: GateSettings, delegate: boolean): string {
     : 'for the rest of this session'
   const lines = [
     'Tool access in this session is gated.',
-    `Exposed from the first step: ${settings.baseTools.join(', ')} and the gate tools \`${settings.selectToolName}\``
+    `Exposed from the first step: ${[...settings.baseTools, ...settings.defaultSelection].join(', ')} and the gate tools \`${settings.selectToolName}\``
       + `${delegate ? ` and \`${settings.delegateToolName}\`` : ''}.`,
     'The runtime context lists the remaining tools with one-line descriptions at the start of the session.',
     'Use glob, grep, and read for discovery; select the shell only for builds, tests, and one-off commands.',
     `Call \`${settings.selectToolName}\` once with the names the task needs; they stay exposed ${lifetime}. `
       + 'The call replaces the set, and changing it later makes the whole conversation be re-read — '
       + 'list everything the task may still need.',
-    'Do not call it for a task the base set already covers.',
+    'If the task needs tools beyond this exposed set, select them before you start; exploring first and selecting later is more expensive.',
     `Check that catalog before telling the user that a capability is unavailable.`,
-    'Remove temporary files you create before you finish.',
+    'Do not create temporary files inside the repository; use the OS temp directory and remove what you create.',
   ]
   if (delegate) {
     lines.push(

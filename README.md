@@ -27,6 +27,7 @@ DSH 每一步开始时重新解析工具面：`tools.resolve()` → `systemPromp
 | 目录文本**整个会话只渲染一次**，之后原样返回 | 改写运行时会替换一条停在 prompt 中段的消息，从那里往后全部失效 |
 | 选择默认**跨轮粘性**（`resetPerTurn: false`） | 每轮重置会把工具声明改回基础集，等于每轮开头重读一次已经几十万的上下文 |
 | 会话中途新注册的工具用 `agent.inject()` **追加**一条通知 | 追加只让尾部新消息未缓存；改写目录会再次破坏前缀 |
+| `defaultSelection`（默认 `[pwsh]`）把最常用的额外工具放进首步 | 单轮任务的工具面从第一次请求起就稳定，没有"先探索、后选择"的第二次变化 |
 
 `select_tools` 的工具结果里会提示"改变选择会让整段对话重读"，所以策略段要求一次选够。
 
@@ -80,6 +81,7 @@ bundle 自己的设置页在 **Plugins → dsh-tool-gate** 的 `plugins.bundle.c
 | 启用工具限制 | `enabled` | 关闭后只保留 dock 上的工具数按钮 |
 | 在其他预设中也生效 | `applyToOtherPresets` | 打开后所有 Agent 预设都会被门控（对新会话生效） |
 | 每个用户消息重置选择 | `resetPerTurn` | 默认关闭；打开会每轮重写工具面，导致整段上下文重读 |
+| 首步预置工具 | `defaultSelection` | 默认 `[pwsh]`：shell 从第一步就可用，单轮任务因此没有第二次工具面变化 |
 
 设置通过 `settings.describe` / `settings.mutate` 读写行配置；改普通字段会让 Host 重启该插件，因此已有的会话保持原来的工具面，新会话才使用新值。
 
@@ -111,6 +113,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
         presetId: tool-gate                         # 本 bundle 的预设 id；只门控该预设的会话
         applyToOtherPresets: false                  # true = 其他预设也门控（等同"全局生效"）
         resetPerTurn: false                         # true = 每个用户消息重置选择（会破坏前缀缓存）
+        defaultSelection: [pwsh]                    # 首步直接暴露、不经过选择调用；空 = 无
         hiddenTools: []                             # 永久隐藏：不进目录、不可选、不可委派
         catalogTools: [pwsh, subagent, todo_write]  # 目录白名单；空 = 继承到的全部工具
         maxDescriptionChars: 160                    # 目录里每条简介的截断长度（>=24）
@@ -141,7 +144,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
 ```sh
 node scripts/build.mjs          # 构建 lib/
 node scripts/build.mjs --noEmit # 只做类型检查
-node tests/all.mjs              # 67 条测试
+node tests/all.mjs              # 70 条测试
 node --check client.js          # 浏览器半侧是手写模块，无构建步骤
 ```
 

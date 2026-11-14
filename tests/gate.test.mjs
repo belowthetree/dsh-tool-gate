@@ -161,6 +161,28 @@ describe('turn window', () => {
     assert.equal(catalogOf(harness).text({ agent: harness.agent }), before)
   })
 
+  it('exposes the default selection from the first step and leaves it out of the catalog', () => {
+    const harness = gated({}, { defaultSelection: ['web_search'] })
+    assert.ok(harness.visibleNames().includes('web_search'))
+    const text = catalogOf(harness).text({ agent: harness.agent })
+    assert.doesNotMatch(text, /- web_search:/)
+    assert.match(text, /- web_fetch:/)
+  })
+
+  it('ignores a default selection the catalog does not provide', () => {
+    const harness = gated({}, { defaultSelection: ['not_a_tool'] })
+    assert.ok(!harness.visibleNames().includes('not_a_tool'))
+  })
+
+  it('keeps the defaults when resetPerTurn clears a selection', async () => {
+    const harness = gated({}, { defaultSelection: ['web_search'], resetPerTurn: true })
+    const select = definitionOf(harness, 'select_tools')
+    await select.execute({ tools: ['web_fetch'] }, exec(harness.agent))
+    harness.claim(harness.agent, userMessage)
+    assert.ok(harness.visibleNames().includes('web_search'))
+    assert.ok(!harness.visibleNames().includes('web_fetch'))
+  })
+
   it('drops the selection when a user message arrives, with resetPerTurn on', async () => {
     const harness = gated({}, { resetPerTurn: true })
     const select = definitionOf(harness, 'select_tools')
@@ -172,7 +194,7 @@ describe('turn window', () => {
   })
 
   it('shows the catalog again after the reset', async () => {
-    const harness = gated()
+    const harness = gated({}, { resetPerTurn: true })
     const select = definitionOf(harness, 'select_tools')
     await select.execute({ tools: ['web_search'] }, exec(harness.agent))
     harness.claim(harness.agent, userMessage)

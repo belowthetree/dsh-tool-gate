@@ -194,7 +194,7 @@ export class ToolGate {
       state = reservation === undefined
         ? {
           catalog,
-          selected: new Set<string>(),
+          selected: this.defaultsFor(catalog),
           base: this.settings.baseTools.filter(name => catalog.has(name)),
           sealed: false,
           reserved: false,
@@ -281,9 +281,14 @@ export class ToolGate {
     // A delegated child's surface was chosen by its parent and must survive the
     // delegation prompt itself — which arrives as a user message.
     if (state.reserved || state.selected.size === 0) return
-    state.selected.clear()
-    debug(`startTurn agent=${agent.id}: selection cleared`)
+    state.selected = this.defaultsFor(state.catalog)
+    debug(`startTurn agent=${agent.id}: selection reset to defaults`)
     this.commit(agent, state)
+  }
+
+  /** The configured default selection, limited to names this catalog offers. */
+  private defaultsFor(catalog: Map<string, CatalogEntry>): Set<string> {
+    return new Set(this.settings.defaultSelection.filter(name => catalog.has(name)))
   }
 
   /**
@@ -312,6 +317,12 @@ export class ToolGate {
       if (!state.reserved) {
         for (const name of this.settings.baseTools) {
           if (state.catalog.has(name) && !state.base.includes(name)) state.base.push(name)
+        }
+        for (const name of this.settings.defaultSelection) {
+          if (state.catalog.has(name) && !state.selected.has(name)) {
+            state.selected.add(name)
+            debug(`default+ agent=${agent.id} ${name}`)
+          }
         }
       }
     } finally {
@@ -437,7 +448,7 @@ export class ToolGate {
     const state = this.states.get(agent)
     if (state === undefined || state.sealed) return ''
     if (state.catalogText !== undefined) return state.catalogText
-    const available = this.offerable(agent)
+    const available = this.catalogFor(agent)
     if (available.length === 0) {
       state.catalogText = 'No further tools are selectable in this session; the base tools are already exposed.'
       return state.catalogText
