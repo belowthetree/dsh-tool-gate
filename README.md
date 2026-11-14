@@ -133,7 +133,7 @@ pnpm dsh plugin --profile <profile> add E:/Project/dsh-plugins/dsh-tool-gate
         maxDescriptionChars: 160                    # 目录里每条简介的截断长度（>=24）
 ```
 
-`defaultSelection` 和 `catalogTools` 里同时出现 `pwsh` 与 `bash` 是刻意的：Windows 组合只有前者、POSIX 组合只有后者，安装和快照时会按实际注册情况过滤。
+`defaultSelection` 和 `catalogTools` 里同时出现 `pwsh` 与 `bash` 是刻意的：Windows 组合只有前者、POSIX 组合只有后者，安装和快照时会按实际注册情况过滤。bundle 默认的 `catalogTools` 覆盖了预设里除基础工具和默认选择之外的全部工具（shell、jobs、skill、goal、plan、image、subagent、ask-user、todo、web、present）；写进白名单但当前组合没有的名字会被忽略，不会报错。
 
 ## 委派：父代理指定子代理的工具
 

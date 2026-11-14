@@ -184,7 +184,9 @@ its own. Linking is idempotent, so from the second build on no write permission 
 
 `pwsh` and `bash` appear in `defaultSelection` / `catalogTools` on purpose: a Windows composition only has
 the former and a POSIX composition only the latter; both are filtered against the actual registrations at
-install and snapshot time.
+install and snapshot time. The bundle's default allowlist covers every preset tool except the base set and
+the default selection (shell, jobs, skill, goal, plan, image, subagent, ask-user, todo, web, present); a
+name in the allowlist that the composition does not provide is ignored, never an error.
 
 ## Delegation: a parent picks the child's tools
 

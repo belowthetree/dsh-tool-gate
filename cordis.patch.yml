@@ -156,7 +156,8 @@
         # tools stay exposed regardless). Empty = every inherited tool, which in
         # a profile with many bundles means dozens of unrelated entries.
         catalogTools: [pwsh, bash, subagent, list_agents, send_message, wait_agent,
-          interrupt_agent, job_output, job_list, job_kill, todo_write, ask_user_question,
-          skill, web_search, web_fetch, present]
+          create_goal, get_goal, update_goal, exit_plan_mode, read_image,
+          job_output, job_list, job_kill, todo_write, ask_user_question, skill,
+          web_search, web_fetch, present]
         # Longest tool description kept in the runtime-context catalog.
         maxDescriptionChars: 160
