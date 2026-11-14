@@ -59,7 +59,7 @@ import {
 import type { GateSettings } from './types.ts'
 
 /** Plugin name used by the cordis loader. */
-export const name = 'dsh-tool-gate'
+export const name = '@belowthetree/dsh-tool-gate'
 
 /** The registries the gate writes to. */
 export const inject = ['tools', 'systemPrompt']
@@ -275,7 +275,7 @@ export function apply(ctx: Context, config: Config): void {
     // while rewriting the catalog would invalidate the prefix cache.
     const discovered = gate.takeNotices(agent)
     if (discovered.length === 0) return
-    const target = agent as unknown as { inject?: (message: never) => void }
+    const target = agent as unknown as { inject?: (message: unknown) => void }
     if (typeof target.inject !== 'function') return
     target.inject(createUserMessage({
       content: [{
@@ -283,12 +283,13 @@ export function apply(ctx: Context, config: Config): void {
         text: `Tools registered after this session's catalog was written are now selectable: ${discovered.join(', ')}.`,
       }],
       source: { kind: 'tool-gate' } as unknown as MessageSource,
-    }) as never)
+    }))
   })
   // Serial listeners are awaited before creation resolves, so a gated agent's
   // restriction is in place before its first request sees a tool list.
   ctx.on('agent/created', ({ agent }) => {
     decide(agent)
+    return undefined
   })
   ctx.on('agent/disposed', ({ agent }) => {
     gate.dispose(agent)

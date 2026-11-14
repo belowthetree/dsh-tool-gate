@@ -1,5 +1,5 @@
 /**
- * Browser half of dsh-tool-gate.
+ * Browser half of dsh-tool-gate (@belowthetree/dsh-tool-gate).
  *
  * Two contributions, both plain React registered through the Slot system:
  *
@@ -15,7 +15,7 @@
  * package name; React comes from the browser module table.
  */
 window.__ModuleLoader__.load({
-  id: 'dsh-tool-gate',
+  id: '@belowthetree/dsh-tool-gate',
   factory(require) {
     const React = require('react')
     const h = React.createElement
@@ -434,7 +434,7 @@ window.__ModuleLoader__.load({
           WithLabels,
         ))
         ctx.slots.inject('plugins.bundle.config', () => ctx.slots.register(
-          { name: 'plugins.bundle.config', key: 'dsh-tool-gate' },
+          { name: 'plugins.bundle.config', key: '@belowthetree/dsh-tool-gate' },
           props => h(BundleSettings, { ...props, api }),
         ))
       },

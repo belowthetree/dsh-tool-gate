@@ -27,7 +27,7 @@ function harness(subagents, projections) {
 
 describe('plugin surface', () => {
   it('is a named function plugin with no default export', () => {
-    assert.equal(name, 'dsh-tool-gate')
+    assert.equal(name, '@belowthetree/dsh-tool-gate')
     assert.equal(typeof apply, 'function')
     assert.equal('default' in plugin, false)
   })

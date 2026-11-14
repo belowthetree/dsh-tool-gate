@@ -1,6 +1,6 @@
 - insert:
     # Tool Gate agent preset: the standard composition, with every other tool
-    # kept behind dsh-tool-gate's per-turn selection.
+    # kept behind dsh-tool-gate's selection.
     - id: preset-tool-gate
       name: '@deepseek-ai/dsh-agent-preset'
       config:
@@ -118,7 +118,7 @@
 # schema, so a row states only the choices a deployment actually makes.
 - insert:
     - id: tool-gate
-      name: dsh-tool-gate
+      name: '@belowthetree/dsh-tool-gate'
       config:
         # false keeps the composer-dock badge (and its session projection) but
         # never restricts a tool: the read-out without the gate.

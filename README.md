@@ -1,5 +1,7 @@
 # dsh-tool-gate
 
+[![npm](https://img.shields.io/npm/v/@belowthetree/dsh-tool-gate?label=npm)](https://www.npmjs.com/package/@belowthetree/dsh-tool-gate)
+
 把一个很小的基础工具集交给模型；**会话开始时，运行时上下文给出剩余工具的简介**，模型用 `select_tools` 保留需要的工具，默认**在整个会话内有效**（`resetPerTurn: true` 可改回"每个用户消息重置"）。
 
 这套语义是"按会话"的：
@@ -87,12 +89,22 @@ bundle 自己的设置页在 **Plugins → dsh-tool-gate** 的 `plugins.bundle.c
 
 ## 安装
 
+从 npm（发布后）：
+
+```sh
+pnpm dsh plugin --profile <profile> add @belowthetree/dsh-tool-gate
+pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装上了
+```
+
+本地开发（不发布）：
+
 ```sh
 cd E:/Project/dsh-plugins/dsh-tool-gate
 node scripts/build.mjs                      # 生成 lib/，并把用到的 DSH 包链进 node_modules
 pnpm dsh plugin --profile <profile> add E:/Project/dsh-plugins/dsh-tool-gate
-pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装上了
 ```
+
+同一个 profile 只能装一种来源：从本地路径换成 npm 包前，先 `remove` 旧的那一个。
 
 `scripts/build.mjs` 自动定位 DSH 检出（`DSH_CHECKOUT` 优先，其次探 `E:/Project/deepseek-harness` 等），把插件 imports 的 workspace 包以目录链接放进插件自己的 `node_modules`。**出树插件不能指望 profile 提供 `dsh-tools`**，必须自带；链接是幂等的，第二次构建起不再需要写权限。
 
@@ -101,7 +113,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
 ```yaml
 - insert:
     - id: tool-gate
-      name: dsh-tool-gate
+      name: '@belowthetree/dsh-tool-gate'
       config:
         enabled: true                                # false = 只保留工具数按钮，不限制任何工具
         baseTools: [read, write, edit, glob, grep]   # 首步常驻；本组合没有的名字自动忽略
@@ -142,8 +154,9 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
 ## 开发
 
 ```sh
-node scripts/build.mjs          # 构建 lib/
+node scripts/build.mjs          # 构建 lib/（链接本地 DSH 检出）
 node scripts/build.mjs --noEmit # 只做类型检查
+npm install && npm run build:ci # 用 npm 上的 DSH 包构建（CI 的路径）
 node tests/all.mjs              # 70 条测试
 node --check client.js          # 浏览器半侧是手写模块，无构建步骤
 ```
@@ -151,6 +164,27 @@ node --check client.js          # 浏览器半侧是手写模块，无构建步�
 排查时设 `DSH_TOOL_GATE_DEBUG=1`，插件会把 `install`/`reserve`/`select`/`commit` 的决策打到 stderr。
 
 测试用一个复刻 restriction 语义的内存工具注册表（`tests/support/fake-tools.mjs`），覆盖：安装后只剩基础+网关工具、目录内容、选择替换语义、未知名字不炸、新用户消息重置、非用户消息不重置、`hiddenTools`、`applyToSubagents`、委派清单/delegate 预留/sealed、配置校验、`enabled: false` 只注册投影、工具面投影的折叠与 wire 校验。
+
+## 发布
+
+仓库带 GitHub Actions 工作流 `.github/workflows/publish.yml`：推送 `v*` tag（或手动触发）时，在 runner 上安装依赖、跑测试、构建，然后 `npm publish --access public --provenance`。
+
+前置：
+
+1. npm 上加入或创建 `@belowthetree` scope，生成一个 Automation token（对 scope 有 publish 权限）；
+2. GitHub 仓库 Settings → Secrets and variables → Actions，添加 `NPM_TOKEN`；
+3. 工作流已声明 `id-token: write`，用于 npm provenance。
+
+发一个版本：
+
+```sh
+npm version patch --no-git-tag-version   # 或手改 package.json
+git add package.json && git commit -m "chore: release 0.3.3"
+git tag v0.3.3
+git push origin main --tags
+```
+
+工作流会先校验 `v<version>` 与 `package.json` 的 `version` 一致，不一致直接失败，避免 tag 与包版本错位。本地发布用 `npm login` 后执行 `npm install && npm run build:ci && npm publish`。
 
 ## 实验：开启 vs 不开启
 
