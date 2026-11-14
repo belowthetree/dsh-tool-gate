@@ -1,5 +1,5 @@
 /**
- * The selection tool: keep some of the catalog for the rest of this user turn.
+ * The selection tool: keep some of the catalog for the rest of the session.
  *
  * The catalog itself is not a tool call — it arrives in the runtime context on
  * the first step after each user message (see `ToolGate.promptText`), so the
@@ -23,22 +23,26 @@ export interface GateToolset {
   readonly settings: GateSettings
 }
 
-/** Build the per-turn selection tool. */
+/** Build the selection tool. */
 export function selectToolsDefinition({ gate, settings }: GateToolset): ToolDefinition {
+  const perTurn = settings.resetPerTurn
+  const lifetime = perTurn ? 'the rest of this user turn' : 'the rest of this session'
   return defineTool({
     name: settings.selectToolName,
-    description: 'Keep the tools you need for the rest of this user turn. '
+    description: `Keep the tools you need for ${lifetime}. `
       + 'The runtime context lists every tool this session can offer, with a one-line description each; '
-      + 'name the ones this task needs and they stay exposed for every later step of the same turn. '
-      + 'The call replaces the turn\'s selection, the base tools stay available without asking, and a new user '
-      + 'message starts a fresh selection window with a fresh catalog. '
-      + 'Keep what the task needs, not everything.',
+      + `name the ones this task needs and they stay exposed ${perTurn ? 'for every later step of the same turn' : 'for every later step of this session'}. `
+      + 'The call replaces the selection; the base tools and the default selection stay available without asking. '
+      + (perTurn
+        ? 'A new user message starts a fresh selection window with a fresh catalog.'
+        : 'Changing the selection later makes the whole conversation be re-read, so list everything the task may still need.')
+      + ' Keep what the task needs, not everything.',
     parameters: {
       tools: {
         type: 'array',
         items: { type: 'string' },
         required: true,
-        description: 'Exact tool names to keep for this turn, as listed in the runtime-context catalog. '
+        description: `Exact tool names to keep for ${perTurn ? 'this turn' : 'the rest of this session'}, as listed in the runtime-context catalog. `
           + 'Passing a new list replaces the previous one; base tools never need to be listed.',
       },
     },
