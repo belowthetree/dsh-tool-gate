@@ -2,6 +2,8 @@
 
 [![npm](https://img.shields.io/npm/v/@belowthetree/dsh-tool-gate?label=npm)](https://www.npmjs.com/package/@belowthetree/dsh-tool-gate)
 
+[English](README.en.md) | **简体中文**
+
 把一个很小的基础工具集交给模型；**会话开始时，运行时上下文给出剩余工具的简介**，模型用 `select_tools` 保留需要的工具，默认**在整个会话内有效**（`resetPerTurn: true` 可改回"每个用户消息重置"）。
 
 这套语义是"按会话"的：
@@ -48,12 +50,12 @@ DSH 每一步开始时重新解析工具面：`tools.resolve()` → `systemPromp
 
 
 ```
-Tool selection (restarts with every user message). Base tools are always exposed; 17 further tools can be kept for this turn:
-- glob: List files by pattern…
-- web_search: Search the web…
+Tool selection. Base tools are always exposed; the tools below can be kept for the rest of this session:
+- ask_user_question: Ask the user a concise question when you need confirmation, a choice, or missing information…
+- web_search: Search the web for current information…
 …
-Call `select_tools` with the names this task needs. They stay exposed for the rest of this turn;
-the next user message resets the selection and shows this catalog again.
+Call `select_tools` once with the names you need; the call replaces the set, so list everything the task
+may still need. Tools you already keep need not be listed again.
 ```
 
 ## 聊天底部的工具数按钮
@@ -131,7 +133,7 @@ pnpm dsh plugin --profile <profile> add E:/Project/dsh-plugins/dsh-tool-gate
         maxDescriptionChars: 160                    # 目录里每条简介的截断长度（>=24）
 ```
 
-`baseTools` 里带 `pwsh` 和 `bash` 两个条目是刻意的：Windows 组合只有前者、POSIX 组合只有后者，安装时会按实际注册情况过滤。
+`defaultSelection` 和 `catalogTools` 里同时出现 `pwsh` 与 `bash` 是刻意的：Windows 组合只有前者、POSIX 组合只有后者，安装和快照时会按实际注册情况过滤。
 
 ## 委派：父代理指定子代理的工具
 
