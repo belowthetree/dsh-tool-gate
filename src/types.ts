@@ -38,6 +38,16 @@ export const DEFAULT_DELEGATE_SEALED = false
  */
 export const DEFAULT_APPLY_TO_SUBAGENTS = true
 
+/** Agent preset this bundle ships; sessions in it are gated by default. */
+export const DEFAULT_PRESET_ID = 'tool-gate'
+
+/**
+ * Whether the gate also applies to sessions using another Agent preset.
+ * `false` keeps the shipped preset the only gated composition, and hides the
+ * gate tools from every other preset.
+ */
+export const DEFAULT_APPLY_TO_OTHER_PRESETS = false
+
 /** Longest catalog description retained per tool. */
 export const DEFAULT_MAX_DESCRIPTION_CHARS = 160
 
@@ -55,6 +65,10 @@ export interface GateSettings {
   readonly delegateSealed: boolean
   /** Whether a non-root agent is gated too. */
   readonly applyToSubagents: boolean
+  /** Agent preset this gate belongs to. */
+  readonly presetId: string
+  /** Whether the gate applies to sessions using another Agent preset. */
+  readonly applyToOtherPresets: boolean
   /** Tools this gate hides from every gated agent and never offers to select. */
   readonly hiddenTools: readonly string[]
   /** Longest catalog description retained per tool, in characters. */

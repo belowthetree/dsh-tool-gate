@@ -20,7 +20,7 @@
  * @param {object} [options.subagents] Fake `subagents` service, or undefined to compose without one.
  * @returns The harness.
  */
-export function createHarness({ tools = [], header, subagents, projections } = {}) {
+export function createHarness({ tools = [], header, subagents, projections, presets = { presetForSession: () => 'tool-gate' } } = {}) {
   const all = new Map(tools.map(tool => [tool.name, tool]))
   const filtersByAgent = new Map()
   const registered = []
@@ -102,7 +102,8 @@ export function createHarness({ tools = [], header, subagents, projections } = {
         return () => {}
       },
     },
-    get: name => (name === 'subagents' ? subagents : name === 'sessionProjections' ? projections : undefined),
+    get: name => (name === 'subagents' ? subagents : name === 'sessionProjections' ? projections : name === 'agentPresets' ? presets : undefined),
+    agentPresets: presets,
     // A scoped context exposes injected services as properties.
     sessionProjections: projections,
     on(event, listener) {

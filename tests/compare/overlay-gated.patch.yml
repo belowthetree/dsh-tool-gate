@@ -1,4 +1,4 @@
-﻿# Gated arm: the control composition plus dsh-tool-gate.
+# Gated arm: the control composition plus dsh-tool-gate.
 #
 # Identical to overlay-control.patch.yml except for the insert at the bottom, so
 # a difference between the arms is a difference in the tool surface, never in the
@@ -61,3 +61,5 @@
         baseTools: [read, write, edit, pwsh, bash]
         delegateProvider: spawn
         delegateSealed: false
+        # Headless arms carry no Agent preset; gate them explicitly.
+        applyToOtherPresets: true

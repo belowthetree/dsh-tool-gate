@@ -46,6 +46,21 @@ the next user message resets the selection and shows this catalog again.
 
 按钮不需要刷新页面也能在已安装后热加载；如果浏览器半侧没有出现，刷新一次页面即可。
 
+## 预设与设置
+
+bundle 的 patch 里还声明了一个 Agent 预设 **Tool Gate**（id `tool-gate`，排在 roster 的 order 20）：它的 `plugins` 就是标准预设那套工具组合，区别只在会话会选到这个预设，从而进入门控。
+
+默认**只门控选了这个预设的会话**；其他预设（standard 等）完全不受影响，并且插件会把 `select_tools` / `delegate` 从这些预设的工具面里隐藏（全局注册的工具必须显式 deny，否则会出现在每个预设里）。
+
+bundle 自己的设置页在 **Plugins → dsh-tool-gate** 的 `plugins.bundle.config` 位置，提供两个开关，写回该行的 Host config：
+
+| 开关 | 字段 | 说明 |
+| --- | --- | --- |
+| 启用工具限制 | `enabled` | 关闭后只保留 dock 上的工具数按钮 |
+| 在其他预设中也生效 | `applyToOtherPresets` | 打开后所有 Agent 预设都会被门控（对新会话生效） |
+
+设置通过 `settings.describe` / `settings.mutate` 读写行配置；改普通字段会让 Host 重启该插件，因此已有的会话保持原来的工具面，新会话才使用新值。
+
 ## 安装
 
 ```sh
@@ -71,6 +86,8 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
         delegateProvider: spawn                     # 承载委派子代理的后端（subagent provider）
         delegateSealed: false                       # true = 默认 sealed，子代理不能自己选工具
         applyToSubagents: true                      # false = 只门控根会话；delegate 预留的子代理仍受控
+        presetId: tool-gate                         # 本 bundle 的预设 id；只门控该预设的会话
+        applyToOtherPresets: false                  # true = 其他预设也门控（等同"全局生效"）
         hiddenTools: []                             # 永久隐藏：不进目录、不可选、不可委派
         maxDescriptionChars: 160                    # 目录里每条简介的截断长度（>=24）
 ```
@@ -100,7 +117,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
 ```sh
 node scripts/build.mjs          # 构建 lib/
 node scripts/build.mjs --noEmit # 只做类型检查
-node tests/all.mjs              # 60 条测试
+node tests/all.mjs              # 63 条测试
 node --check client.js          # 浏览器半侧是手写模块，无构建步骤
 ```
 

@@ -101,6 +101,8 @@ export class ToolGate {
   private readonly states = new Map<Agent, GateState>()
   /** Parent-chosen sets waiting for their child agent, keyed by session id. */
   private readonly reservations = new Map<string, DelegationReservation>()
+  /** Deny filters that keep the gate tools out of agents the gate does not apply to. */
+  private readonly exclusions = new Map<Agent, () => void>()
   /** Names that are always exposed to a gated agent: the gate tools themselves. */
   private readonly gateToolNames: readonly string[]
 
@@ -202,6 +204,8 @@ export class ToolGate {
 
   /** Lift one agent's restriction, if this gate installed it. */
   dispose(agent: Agent): void {
+    this.exclusions.get(agent)?.()
+    this.exclusions.delete(agent)
     const state = this.states.get(agent)
     if (state === undefined) return
     state.lift?.()
@@ -210,11 +214,29 @@ export class ToolGate {
 
   /** Lift every restriction; used when the plugin unloads. */
   disposeAll(): void {
+    for (const dispose of this.exclusions.values()) dispose()
+    this.exclusions.clear()
     for (const [agent, state] of this.states) {
       state.lift?.()
       this.states.delete(agent)
     }
     this.reservations.clear()
+  }
+
+  /**
+   * Hide the gate tools from an agent the gate does not apply to (a session in
+   * another Agent preset). The tools are registered composition-wide, so without
+   * this they would appear in every preset even when the gate is off there.
+   * @param agent - the agent to keep clean.
+   */
+  excludeGateTools(agent: Agent): void {
+    if (this.exclusions.has(agent)) return
+    try {
+      this.exclusions.set(agent, agent.ctx.tools.restrict({ deny: [...this.gateToolNames] }))
+    } catch (error: unknown) {
+      // A foreign registration cannot be denied; the agent simply keeps its tools.
+      debug(`exclude failed agent=${agent.id}: ${messageOf(error)}`)
+    }
   }
 
   /**

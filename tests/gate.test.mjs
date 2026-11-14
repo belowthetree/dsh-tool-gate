@@ -180,6 +180,36 @@ describe('turn window', () => {
 
 })
 
+describe('presets', () => {
+  it('leaves another preset ungated and hides the gate tools', () => {
+    const harness = createHarness({
+      tools: TOOLS,
+      presets: { presetForSession: () => 'standard' },
+    })
+    apply(harness.ctx, Config({}))
+    harness.emit('agent/created', { agent: harness.agent })
+    assert.deepEqual(harness.visibleNames().sort(), ['edit', 'pwsh', 'read', 'subagent', 'web_fetch', 'web_search', 'write'])
+    assert.equal(harness.filters.length, 1)
+  })
+
+  it('gates every preset when applyToOtherPresets is on', () => {
+    const harness = createHarness({
+      tools: TOOLS,
+      presets: { presetForSession: () => 'standard' },
+    })
+    apply(harness.ctx, Config({ applyToOtherPresets: true }))
+    harness.emit('agent/created', { agent: harness.agent })
+    assert.deepEqual(harness.visibleNames().sort(), ['edit', 'pwsh', 'read', 'select_tools', 'write'])
+  })
+
+  it('gates the shipped preset', () => {
+    const harness = createHarness({ tools: TOOLS })
+    apply(harness.ctx, Config({}))
+    harness.emit('agent/created', { agent: harness.agent })
+    assert.ok(harness.visibleNames().includes('select_tools'))
+  })
+})
+
 describe('configuration', () => {
   it('never exposes or offers a hidden tool', async () => {
     const harness = gated({}, { hiddenTools: ['web_search'] })

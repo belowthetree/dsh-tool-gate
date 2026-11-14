@@ -42,11 +42,13 @@ import { createToolSurfaceProjection } from './surface.ts'
 import { selectToolsDefinition } from './tools.ts'
 import {
   DEFAULT_APPLY_TO_SUBAGENTS,
+  DEFAULT_APPLY_TO_OTHER_PRESETS,
   DEFAULT_BASE_TOOLS,
   DEFAULT_DELEGATE_PROVIDER,
   DEFAULT_DELEGATE_SEALED,
   DEFAULT_DELEGATE_TOOL_NAME,
   DEFAULT_MAX_DESCRIPTION_CHARS,
+  DEFAULT_PRESET_ID,
   DEFAULT_SELECT_TOOL_NAME,
 } from './types.ts'
 import type { GateSettings } from './types.ts'
@@ -80,6 +82,10 @@ export interface Config {
   delegateSealed?: boolean
   /** Whether non-root agents are gated too; `false` leaves delegated children with the full surface. */
   applyToSubagents?: boolean
+  /** Agent preset this gate belongs to; sessions in another preset are left untouched unless `applyToOtherPresets`. */
+  presetId?: string
+  /** Whether the gate also applies to sessions using another Agent preset. */
+  applyToOtherPresets?: boolean
   /** Tools this gate always hides: never in the base set, never selectable, never selectable for a child. */
   hiddenTools?: string[]
   /** Longest catalog description retained per tool. */
@@ -95,6 +101,8 @@ export const Config: z<Config> = z.object({
   delegateProvider: z.string().default(DEFAULT_DELEGATE_PROVIDER),
   delegateSealed: z.boolean().default(DEFAULT_DELEGATE_SEALED),
   applyToSubagents: z.boolean().default(DEFAULT_APPLY_TO_SUBAGENTS),
+  presetId: z.string().default(DEFAULT_PRESET_ID),
+  applyToOtherPresets: z.boolean().default(DEFAULT_APPLY_TO_OTHER_PRESETS),
   hiddenTools: z.array(z.string()).default([]),
   maxDescriptionChars: z.number().default(DEFAULT_MAX_DESCRIPTION_CHARS),
 })
@@ -131,6 +139,8 @@ export function apply(ctx: Context, config: Config): void {
     delegateProvider: resolved.delegateProvider,
     delegateSealed: resolved.delegateSealed,
     applyToSubagents: resolved.applyToSubagents,
+    presetId: resolved.presetId,
+    applyToOtherPresets: resolved.applyToOtherPresets,
     hiddenTools: [...resolved.hiddenTools],
     maxDescriptionChars: resolved.maxDescriptionChars,
   }
@@ -162,6 +172,23 @@ export function apply(ctx: Context, config: Config): void {
   let roots: SubagentRoots | undefined
   let delegateRegistered = false
   const gate = new ToolGate(ctx, settings, [settings.selectToolName])
+
+  /** The Agent preset a live agent records, or null when it records none. */
+  const presetOf = (agent: Agent): string | null => {
+    const presets = ctx.get('agentPresets') as { presetForSession?: (session: unknown) => string | null } | undefined
+    if (typeof presets?.presetForSession !== 'function') return null
+    const session = (agent as unknown as { session?: unknown }).session
+    if (session === undefined) return null
+    try {
+      return presets.presetForSession(session)
+    } catch {
+      return null
+    }
+  }
+
+  /** Whether this agent belongs to the gated preset (or the gate is profile-wide). */
+  const appliesTo = (agent: Agent): boolean => settings.applyToOtherPresets
+    || (settings.presetId !== '' && presetOf(agent) === settings.presetId)
 
   ctx.tools.register(selectToolsDefinition({ gate, settings }))
   ctx.inject(['subagents'], (scoped: Context) => {
@@ -207,6 +234,12 @@ export function apply(ctx: Context, config: Config): void {
   // child (`delegate`) is always installed even when `applyToSubagents` is off:
   // its surface is the reservation, not the composition.
   ctx.on('agent/created', ({ agent }) => {
+    // A session in another Agent preset keeps the full surface; only the gate
+    // tools are hidden, so those presets never offer a tool they cannot use.
+    if (!appliesTo(agent)) {
+      gate.excludeGateTools(agent)
+      return
+    }
     if (!settings.applyToSubagents && !gate.hasReservation(String(agent.id)) && !isRootAgent(roots, agent)) return
     gate.install(agent)
   })

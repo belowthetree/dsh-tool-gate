@@ -46,6 +46,8 @@ describe('Config', () => {
     assert.equal(resolved.delegateProvider, 'spawn')
     assert.equal(resolved.delegateSealed, false)
     assert.equal(resolved.applyToSubagents, true)
+    assert.equal(resolved.presetId, 'tool-gate')
+    assert.equal(resolved.applyToOtherPresets, false)
     assert.deepEqual(resolved.hiddenTools, [])
     assert.equal(resolved.maxDescriptionChars, 160)
   })
