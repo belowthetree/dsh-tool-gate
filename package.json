@@ -1,6 +1,6 @@
 {
   "name": "dsh-tool-gate",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Expose a small base toolset and let the model keep the tools it needs per user turn, plus a composer-dock badge that reports the session's current tool surface.",
   "private": true,
   "type": "module",

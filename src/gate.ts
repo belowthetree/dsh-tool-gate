@@ -84,6 +84,14 @@ interface GateState {
   sealed: boolean
   /** Whether this agent's starting set came from a parent reservation. */
   reserved: boolean
+  /**
+   * The catalog text rendered for this session. Built once and reused: any
+   * rewrite would replace a runtime-context message in the middle of the
+   * prompt and invalidate the provider's prefix cache.
+   */
+  catalogText?: string
+  /** Tools discovered after {@link catalogText} was built, pending one notice. */
+  notices: string[]
   /** Disposer of the live restriction; absent while the gate is not applied. */
   lift?: () => void
   /** Why the last attempt to restrict failed, when it did. */
@@ -190,6 +198,7 @@ export class ToolGate {
           base: this.settings.baseTools.filter(name => catalog.has(name)),
           sealed: false,
           reserved: false,
+          notices: [],
         }
         : {
           catalog,
@@ -197,6 +206,7 @@ export class ToolGate {
           base: [],
           sealed: reservation.sealed,
           reserved: true,
+          notices: [],
         }
       this.states.set(agent, state)
       debug(`install agent=${agent.id} catalog=${catalog.size} reserved=${reservation !== undefined} `
@@ -256,18 +266,18 @@ export class ToolGate {
   }
 
   /**
-   * Open a fresh selection window for one user message: the turn's kept tools
-   * are dropped and the restriction returns to the base surface. The catalog is
-   * shown again because nothing is selected.
+   * Prepare one user turn: discover tools registered since the snapshot, and
+   * (when configured) start from the base surface again.
+   *
+   * The catalog text is never rewritten here — it is built once per session
+   * because replacing it would invalidate the provider's prefix cache.
    * @param agent - the agent that received the message.
    */
   startTurn(agent: Agent): void {
     const state = this.states.get(agent)
     if (state === undefined) return
-    // Tools registered after this agent started — a plugin activated later, an
-    // MCP server that connected, a preset row mounted late — were not in the
-    // creation snapshot; merge them so this turn's catalog can offer them.
     this.refreshCatalog(agent, state)
+    if (!this.settings.resetPerTurn) return
     // A delegated child's surface was chosen by its parent and must survive the
     // delegation prompt itself — which arrives as a user message.
     if (state.reserved || state.selected.size === 0) return
@@ -278,9 +288,10 @@ export class ToolGate {
 
   /**
    * Merge tools that appeared after the creation snapshot into one agent's
-   * catalog (and into its base set when configured). Removal is deliberately
-   * ignored: a name that left the registry is dropped by `commit`'s
-   * restrictable filter instead of silently rewriting a turn's selection here.
+   * catalog. Late discoveries are queued as a notice the caller appends to the
+   * conversation, because editing the catalog text would break the cache.
+   * Removal is deliberately ignored: a name that left the registry is dropped
+   * by `commit`'s restrictable filter instead of rewriting a selection here.
    * @param agent - the gated agent.
    * @param state - its live gate state.
    */
@@ -293,10 +304,10 @@ export class ToolGate {
     lift?.()
     try {
       for (const entry of this.snapshot(agent).values()) {
-        if (!state.catalog.has(entry.name)) {
-          state.catalog.set(entry.name, entry)
-          debug(`catalog+ agent=${agent.id} ${entry.name}`)
-        }
+        if (state.catalog.has(entry.name)) continue
+        state.catalog.set(entry.name, entry)
+        state.notices.push(entry.name)
+        debug(`catalog+ agent=${agent.id} ${entry.name}`)
       }
       if (!state.reserved) {
         for (const name of this.settings.baseTools) {
@@ -308,16 +319,40 @@ export class ToolGate {
     }
   }
 
-  /** Catalog entries the model may keep, sorted by name. */
+  /**
+   * Tools discovered since the last call, as names the caller announces with an
+   * appended message. Returns and clears the queue.
+   * @param agent - the gated agent.
+   */
+  takeNotices(agent: Agent): string[] {
+    const state = this.states.get(agent)
+    if (state === undefined || state.notices.length === 0) return []
+    const names = [...state.notices]
+    state.notices.length = 0
+    return names
+  }
+
+  /** Tools the catalog may offer: everything but the always-exposed names. */
+  offerable(agent: Agent): CatalogEntry[] {
+    const state = this.states.get(agent)
+    if (state === undefined || state.sealed) return []
+    const entries: CatalogEntry[] = []
+    for (const entry of state.catalog.values()) {
+      if (this.isAlways(entry.name, state)) continue
+      entries.push(entry)
+    }
+    return entries.sort((left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0))
+  }
+
+  /**
+   * Catalog entries the model may keep but does not yet, sorted by name.
+   * The rendered text keeps listing kept tools on purpose (see `promptText`);
+   * this method stays for callers that need the difference.
+   */
   catalogFor(agent: Agent): CatalogEntry[] {
     const state = this.states.get(agent)
     if (state === undefined || state.sealed) return []
-    const pending: CatalogEntry[] = []
-    for (const entry of state.catalog.values()) {
-      if (this.isAlways(entry.name, state) || state.selected.has(entry.name)) continue
-      pending.push(entry)
-    }
-    return pending.sort((left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0))
+    return this.offerable(agent).filter(entry => !state.selected.has(entry.name))
   }
 
   /** Everything the gate currently exposes for one agent, sorted by name. */
@@ -401,28 +436,25 @@ export class ToolGate {
   promptText(agent: Agent): string {
     const state = this.states.get(agent)
     if (state === undefined || state.sealed) return ''
-    const available = this.catalogFor(agent)
+    if (state.catalogText !== undefined) return state.catalogText
+    const available = this.offerable(agent)
     if (available.length === 0) {
-      return 'No further tools are selectable in this session; the base tools are already exposed.'
+      state.catalogText = 'No further tools are selectable in this session; the base tools are already exposed.'
+      return state.catalogText
     }
-    if (state.selected.size === 0) {
-      const lines = [
-        'Tool selection (restarts with every user message). Base tools are always exposed; '
-        + `${available.length} further tools can be kept for this turn:`,
-      ]
-      for (const entry of available) lines.push(`- ${entry.name}: ${entry.description}`)
-      lines.push(
-        `Call \`${this.settings.selectToolName}\` once with the names this task needs. They stay exposed for the rest of this turn; `
-        + 'the next user message resets the selection and shows this catalog again.',
-      )
-      return lines.join('\n')
-    }
-    const kept = [...state.selected].sort()
-    return [
-      `Kept for this turn: ${kept.join(', ')} (reset at the next user message).`,
-      `Still selectable: ${available.map(entry => entry.name).join(', ')}; `
-      + `calling \`${this.settings.selectToolName}\` replaces the selection.`,
-    ].join('\n')
+    const lifetime = this.settings.resetPerTurn
+      ? 'for the rest of this turn (the next user message resets it)'
+      : 'for the rest of this session'
+    const lines = [
+      `Tool selection. Base tools are always exposed; the tools below can be kept ${lifetime}:`,
+    ]
+    for (const entry of available) lines.push(`- ${entry.name}: ${entry.description}`)
+    lines.push(
+      `Call \`${this.settings.selectToolName}\` once with the names you need; the call replaces the set, `
+      + 'so list everything the task may still need. Tools you already keep need not be listed again.',
+    )
+    state.catalogText = lines.join('\n')
+    return state.catalogText
   }
 
   /** The pre-restriction surface the agent would see without the gate. */

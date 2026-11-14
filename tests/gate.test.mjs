@@ -97,13 +97,14 @@ describe('catalog context', () => {
     assert.match(text, /select_tools/)
   })
 
-  it('switches to a compact summary after the turn selects tools', async () => {
+  it('keeps the catalog text stable after the turn selects tools', async () => {
     const harness = gated()
+    const before = catalogOf(harness).text({ agent: harness.agent })
     const select = definitionOf(harness, 'select_tools')
     await select.execute({ tools: ['web_search'] }, exec(harness.agent))
-    const text = catalogOf(harness).text({ agent: harness.agent })
-    assert.match(text, /Kept for this turn: web_search/)
-    assert.doesNotMatch(text, /- web_search:/)
+    const after = catalogOf(harness).text({ agent: harness.agent })
+    assert.equal(after, before)
+    assert.match(after, /- web_search:/)
   })
 })
 
@@ -112,7 +113,7 @@ describe('selection', () => {
     const harness = gated()
     const select = definitionOf(harness, 'select_tools')
     const result = await select.execute({ tools: ['web_search'] }, exec(harness.agent))
-    assert.match(result, /Kept for this turn: web_search/)
+    assert.match(result, /Kept for the rest of this session: web_search/)
     assert.ok(harness.visibleNames().includes('web_search'))
   })
 
@@ -137,7 +138,7 @@ describe('selection', () => {
     const harness = gated()
     const select = definitionOf(harness, 'select_tools')
     const result = await select.execute({ tools: ['web_search', 'no_such_tool'] }, exec(harness.agent))
-    assert.match(result, /Kept for this turn: web_search/)
+    assert.match(result, /Kept for the rest of this session: web_search/)
     assert.match(result, /Rejected "no_such_tool"/)
   })
 
@@ -150,8 +151,18 @@ describe('selection', () => {
 })
 
 describe('turn window', () => {
-  it('drops the selection when a user message arrives', async () => {
+  it('keeps the selection and the catalog text across turns by default', async () => {
     const harness = gated()
+    const select = definitionOf(harness, 'select_tools')
+    await select.execute({ tools: ['web_search'] }, exec(harness.agent))
+    const before = catalogOf(harness).text({ agent: harness.agent })
+    harness.claim(harness.agent, userMessage)
+    assert.ok(harness.visibleNames().includes('web_search'))
+    assert.equal(catalogOf(harness).text({ agent: harness.agent }), before)
+  })
+
+  it('drops the selection when a user message arrives, with resetPerTurn on', async () => {
+    const harness = gated({}, { resetPerTurn: true })
     const select = definitionOf(harness, 'select_tools')
     await select.execute({ tools: ['web_search', 'subagent'] }, exec(harness.agent))
     assert.ok(harness.visibleNames().includes('web_search'))
@@ -167,7 +178,7 @@ describe('turn window', () => {
     harness.claim(harness.agent, userMessage)
     const text = catalogOf(harness).text({ agent: harness.agent })
     assert.match(text, /- web_search:/)
-    assert.doesNotMatch(text, /Kept for this turn:/)
+    assert.doesNotMatch(text, /Kept for the rest of this session:/)
   })
 
   it('ignores messages that are not user input', async () => {
@@ -236,13 +247,17 @@ describe('presets', () => {
 
   it('offers a tool registered after the agent started on the next turn', async () => {
     const harness = gated()
+    const before = catalogOf(harness).text({ agent: harness.agent })
     harness.addTool('late_tool')
-    // The creation snapshot cannot know it; the next user turn refreshes.
-    assert.doesNotMatch(catalogOf(harness).text({ agent: harness.agent }), /late_tool/)
+    // The creation snapshot cannot know it; the next user turn appends a notice
+    // instead of rewriting the catalog text (which would break the prefix cache).
     harness.claim(harness.agent, userMessage)
+    assert.equal(catalogOf(harness).text({ agent: harness.agent }), before)
+    assert.equal(harness.injections.length, 1)
+    assert.match(JSON.stringify(harness.injections[0]), /late_tool/)
     const select = definitionOf(harness, 'select_tools')
     const result = await select.execute({ tools: ['late_tool'] }, exec(harness.agent))
-    assert.match(result, /Kept for this turn: late_tool/)
+    assert.match(result, /Kept for the rest of this session: late_tool/)
     assert.ok(harness.visibleNames().includes('late_tool'))
   })
 })

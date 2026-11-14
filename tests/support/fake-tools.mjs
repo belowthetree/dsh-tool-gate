@@ -87,6 +87,8 @@ export function createHarness({ tools = [], header, subagents, projections, pres
   }
 
   const agent = createAgent('agent-1')
+  const injections = []
+  agent.inject = message => { injections.push(message) }
 
   const ctx = {
     tools: pluginTools,
@@ -135,6 +137,7 @@ export function createHarness({ tools = [], header, subagents, projections, pres
     sections,
     contexts,
     visibleNames,
+    injections,
     /** Dispatch one captured lifecycle event. */
     /** Register a tool after the harness was built, as a late plugin would. */
     addTool: (name, description = name + ' appeared later.') => {

@@ -48,6 +48,13 @@ export const DEFAULT_PRESET_ID = 'tool-gate'
  */
 export const DEFAULT_APPLY_TO_OTHER_PRESETS = false
 
+/**
+ * Whether a kept selection resets at the next user message. `false` (the
+ * default) keeps it for the session: a reset rewrites the tool surface, and any
+ * surface change makes the provider re-read the whole prompt uncached.
+ */
+export const DEFAULT_RESET_PER_TURN = false
+
 /** Longest catalog description retained per tool. */
 export const DEFAULT_MAX_DESCRIPTION_CHARS = 160
 
@@ -76,6 +83,8 @@ export interface GateSettings {
   readonly presetId: string
   /** Whether the gate applies to sessions using another Agent preset. */
   readonly applyToOtherPresets: boolean
+  /** Whether a kept selection resets at the next user message. */
+  readonly resetPerTurn: boolean
   /** Tools this gate hides from every gated agent and never offers to select. */
   readonly hiddenTools: readonly string[]
   /** Tools the catalog may offer; empty offers every inherited tool. */

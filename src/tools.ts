@@ -49,10 +49,11 @@ export function selectToolsDefinition({ gate, settings }: GateToolset): ToolDefi
     async execute(args, exec) {
       const agent = requireAgent(exec, settings.selectToolName)
       const outcome = gate.select(agent, args.tools)
+      const lifetime = settings.resetPerTurn ? 'this turn (the next user message resets it)' : 'the rest of this session'
       const lines: string[] = []
       lines.push(outcome.accepted.length === 0
-        ? 'Nothing new was kept for this turn.'
-        : `Kept for this turn: ${outcome.accepted.join(', ')}. Available from your next step and until the next user message.`)
+        ? 'Nothing new was kept.'
+        : `Kept for ${lifetime}: ${outcome.accepted.join(', ')}. Available from your next step.`)
       if (outcome.always.length > 0) lines.push(`Always available: ${outcome.always.join(', ')}.`)
       for (const rejection of outcome.rejected) {
         lines.push(`Rejected "${rejection.name}": ${rejection.reason}. Use the exact names from the runtime-context catalog.`)

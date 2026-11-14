@@ -141,6 +141,10 @@
         presetId: tool-gate
         # true = the gate also applies to every other Agent preset.
         applyToOtherPresets: false
+        # false keeps a kept selection for the whole session. true resets it at
+        # the next user message — but that rewrites the tool surface, and the
+        # provider then re-reads the whole prompt uncached.
+        resetPerTurn: false
         # Tools the gate always hides: never in the catalog, never selectable,
         # never selectable for a delegated child.
         hiddenTools: []

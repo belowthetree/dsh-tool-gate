@@ -50,7 +50,7 @@ describe('select_tools', () => {
     const harness = gated()
     const select = definitionOf(harness, 'select_tools')
     const result = await select.execute({ tools: ['office_render'] }, exec(harness.agent))
-    assert.match(result, /Kept for this turn: office_render/)
+    assert.match(result, /Kept for the rest of this session: office_render/)
     assert.match(result, /Exposed now: [^\n]*office_render/)
   })
 

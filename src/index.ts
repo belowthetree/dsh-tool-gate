@@ -30,6 +30,8 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import type { Agent } from '@deepseek-ai/dsh-agent'
+import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import type { MessageSource } from '@deepseek-ai/dsh-llm'
 import type {} from '@deepseek-ai/dsh-subagent'
 import type {} from '@deepseek-ai/dsh-system-prompt'
 import type {} from '@deepseek-ai/dsh-session-projection'
@@ -50,6 +52,7 @@ import {
   DEFAULT_DELEGATE_TOOL_NAME,
   DEFAULT_MAX_DESCRIPTION_CHARS,
   DEFAULT_PRESET_ID,
+  DEFAULT_RESET_PER_TURN,
   DEFAULT_SELECT_TOOL_NAME,
 } from './types.ts'
 import type { GateSettings } from './types.ts'
@@ -87,6 +90,8 @@ export interface Config {
   presetId?: string
   /** Whether the gate also applies to sessions using another Agent preset. */
   applyToOtherPresets?: boolean
+  /** Whether a kept selection resets at the next user message; alse keeps it for the session. */
+  resetPerTurn?: boolean
   /** Tools this gate always hides: never in the base set, never selectable, never selectable for a child. */
   hiddenTools?: string[]
   /** Optional catalog allowlist; empty offers every inherited tool. */
@@ -106,6 +111,7 @@ export const Config: z<Config> = z.object({
   applyToSubagents: z.boolean().default(DEFAULT_APPLY_TO_SUBAGENTS),
   presetId: z.string().default(DEFAULT_PRESET_ID),
   applyToOtherPresets: z.boolean().default(DEFAULT_APPLY_TO_OTHER_PRESETS),
+  resetPerTurn: z.boolean().default(DEFAULT_RESET_PER_TURN),
   hiddenTools: z.array(z.string()).default([]),
   catalogTools: z.array(z.string()).default([...DEFAULT_CATALOG_TOOLS]),
   maxDescriptionChars: z.number().default(DEFAULT_MAX_DESCRIPTION_CHARS),
@@ -151,6 +157,7 @@ export function apply(ctx: Context, config: Config): void {
     applyToSubagents: resolved.applyToSubagents,
     presetId: resolved.presetId,
     applyToOtherPresets: resolved.applyToOtherPresets,
+    resetPerTurn: resolved.resetPerTurn,
     hiddenTools: [...resolved.hiddenTools],
     catalogTools: [...resolved.catalogTools],
     maxDescriptionChars: resolved.maxDescriptionChars,
@@ -258,6 +265,20 @@ export function apply(ctx: Context, config: Config): void {
     if (message.role !== 'user' || message.source?.kind !== 'user') return
     decide(agent)
     gate.startTurn(agent)
+    // Tools discovered after the catalog was written are announced with one
+    // appended message: appending keeps the earlier prompt byte-identical,
+    // while rewriting the catalog would invalidate the prefix cache.
+    const discovered = gate.takeNotices(agent)
+    if (discovered.length === 0) return
+    const target = agent as unknown as { inject?: (message: never) => void }
+    if (typeof target.inject !== 'function') return
+    target.inject(createUserMessage({
+      content: [{
+        type: 'text',
+        text: `Tools registered after this session's catalog was written are now selectable: ${discovered.join(', ')}.`,
+      }],
+      source: { kind: 'tool-gate' } as unknown as MessageSource,
+    }) as never)
   })
   // Serial listeners are awaited before creation resolves, so a gated agent's
   // restriction is in place before its first request sees a tool list.
@@ -291,15 +312,20 @@ function isRootAgent(roots: SubagentRoots | undefined, agent: Agent): boolean {
 
 /** The instruction that keeps a gated model from under-reporting its abilities. */
 function policyText(settings: GateSettings, delegate: boolean): string {
+  const lifetime = settings.resetPerTurn
+    ? 'for the rest of the current turn (the next user message resets it)'
+    : 'for the rest of this session'
   const lines = [
     'Tool access in this session is gated.',
     `Exposed from the first step: ${settings.baseTools.join(', ')} and the gate tools \`${settings.selectToolName}\``
       + `${delegate ? ` and \`${settings.delegateToolName}\`` : ''}.`,
-    'The runtime context lists the remaining tools with one-line descriptions at the start of every user turn.',
+    'The runtime context lists the remaining tools with one-line descriptions at the start of the session.',
     'Use glob, grep, and read for discovery; select the shell only for builds, tests, and one-off commands.',
-    `Call \`${settings.selectToolName}\` once with the names this task needs; they stay exposed for the rest of the current turn and reset at the next user message. `
-      + 'The call replaces the turn\'s selection, so list everything the turn still needs, and do not call it again unless the task changes.',
-    `Check that catalog before telling the user that a capability is unavailable, and keep only what the task needs.`,
+    `Call \`${settings.selectToolName}\` once with the names the task needs; they stay exposed ${lifetime}. `
+      + 'The call replaces the set, and changing it later makes the whole conversation be re-read — '
+      + 'list everything the task may still need.',
+    'Do not call it for a task the base set already covers.',
+    `Check that catalog before telling the user that a capability is unavailable.`,
     'Remove temporary files you create before you finish.',
   ]
   if (delegate) {
