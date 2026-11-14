@@ -1,7 +1,7 @@
 {
   "name": "dsh-tool-gate",
-  "version": "0.1.0",
-  "description": "Expose a small base toolset and let the model unlock the rest on demand: a discovery tool plus a selection tool, applied as a per-agent tool restriction that takes effect on the next step.",
+  "version": "0.2.0",
+  "description": "Expose a small base toolset and let the model keep the tools it needs per user turn, plus a composer-dock badge that reports the session's current tool surface.",
   "private": true,
   "type": "module",
   "main": "./lib/index.js",
@@ -11,10 +11,12 @@
       "types": "./lib/types/index.d.ts",
       "default": "./lib/index.js"
     },
+    "./client": "./client.js",
     "./package.json": "./package.json"
   },
   "files": [
     "lib",
+    "client.js",
     "cordis.patch.yml",
     "scripts/build.mjs",
     "README.md"
@@ -22,6 +24,11 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": ["@deepseek-ai/dsh-client-ui-conversation"]
     }
   },
   "engines": {

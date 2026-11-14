@@ -32,11 +32,13 @@ import type { Context } from '@deepseek-ai/cordis'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import type {} from '@deepseek-ai/dsh-subagent'
 import type {} from '@deepseek-ai/dsh-system-prompt'
+import type {} from '@deepseek-ai/dsh-session-projection'
 import type {} from '@deepseek-ai/dsh-tools'
 import z from '@deepseek-ai/schemastery'
 import { delegateDefinition } from './delegate.ts'
 import type { DelegationRuntime } from './delegate.ts'
 import { ToolGate } from './gate.ts'
+import { createToolSurfaceProjection } from './surface.ts'
 import { selectToolsDefinition } from './tools.ts'
 import {
   DEFAULT_APPLY_TO_SUBAGENTS,
@@ -57,6 +59,12 @@ export const inject = ['tools', 'systemPrompt']
 
 /** Deployment-varying choices; every field is defaulted and validated at load. */
 export interface Config {
+  /**
+   * Whether tools are actually restricted. `false` keeps the session projection
+   * and the composer-dock badge but leaves every tool exposed — useful to adopt
+   * the read-out before the gate.
+   */
+  enabled?: boolean
   /**
    * Tools exposed from the first step. Names this composition does not provide
    * are ignored, so the default covers Windows and POSIX deployments alike.
@@ -80,6 +88,7 @@ export interface Config {
 
 /** Schema for {@link Config}; the loader fills every default before `apply`. */
 export const Config: z<Config> = z.object({
+  enabled: z.boolean().default(true),
   baseTools: z.array(z.string()).default([...DEFAULT_BASE_TOOLS]),
   selectToolName: z.string().default(DEFAULT_SELECT_TOOL_NAME),
   delegateToolName: z.string().default(DEFAULT_DELEGATE_TOOL_NAME),
@@ -125,6 +134,26 @@ export function apply(ctx: Context, config: Config): void {
     hiddenTools: [...resolved.hiddenTools],
     maxDescriptionChars: resolved.maxDescriptionChars,
   }
+
+  // The composer-dock badge reads this projection: the tool surface of the
+  // session's latest model request, folded on the Host so the browser never
+  // replays events. It stays available even in badge-only mode, and the service
+  // is optional because not every profile composes projections.
+  ctx.inject(['sessionProjections'], (scoped: Context) => {
+    const projection = createToolSurfaceProjection([
+      ...settings.baseTools,
+      settings.selectToolName,
+      settings.delegateToolName,
+    ])
+    void scoped.sessionProjections.register(projection).catch((error: unknown) => {
+      // A missing projection only costs the badge; the gate itself must load.
+      console.error('dsh-tool-gate: session projection unavailable:', error)
+    })
+  })
+
+  // `enabled: false` keeps the projection and the badge but never restricts a
+  // tool: the read-out without the gate, for a profile being migrated.
+  if (!resolved.enabled) return
 
   // Delegation needs a backend. The `subagents` service may not be active when
   // this plugin applies (loader activation order is dependency-driven, not row

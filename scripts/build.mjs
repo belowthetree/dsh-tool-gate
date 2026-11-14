@@ -82,6 +82,12 @@ function workspacePackages(checkout) {
   return found
 }
 
+/** Package name of a bare specifier: `pkg/sub` → `pkg`, `@scope/pkg/sub` → `@scope/pkg`. */
+function packageNameOf(specifier) {
+  const parts = specifier.split('/')
+  return specifier.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0]
+}
+
 /** Bare specifiers the plugin's own sources import. */
 function importedPackages() {
   const names = new Set()
@@ -93,7 +99,9 @@ function importedPackages() {
       const specifier = match[1]
       if (specifier === undefined) continue
       if (specifier.startsWith('.') || specifier.startsWith('node:')) continue
-      names.add(specifier)
+      // Subpath imports (`@scope/pkg/types`) link the package they belong to;
+      // the compiler resolves the subpath from the linked package itself.
+      names.add(packageNameOf(specifier))
     }
   }
   return names

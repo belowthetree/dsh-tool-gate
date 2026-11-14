@@ -34,6 +34,18 @@ Call `select_tools` with the names this task needs. They stay exposed for the re
 the next user message resets the selection and shows this catalog again.
 ```
 
+## 聊天底部的工具数按钮
+
+插件带一个浏览器半侧（`client.js`）：在 `conversation.composer.dock` 注册一个胶囊按钮，显示**本会话最近一次模型请求实际可调用的工具数**，点击在按钮上方展开详情（工具名 + 一行简介，基础工具标 `基础`）。
+
+数字来自 Host 侧注册的 session projection（key `toolGate`，`wire.view` 只折叠 `request/header` 事件），浏览器侧只用 `props.useProjection('toolGate')` 读取，不重放会话事件。所以：
+
+- 门控开启时，数字会随 `select_tools` / `delegate` 改变而变（每次工具面变化都会写一条 `request/header`）；
+- 门控关闭（`enabled: false`）时，它仍然显示当前组合的全部工具——相当于"只读看板"；
+- 子代理会话各自显示自己的工具数。
+
+按钮不需要刷新页面也能在已安装后热加载；如果浏览器半侧没有出现，刷新一次页面即可。
+
 ## 安装
 
 ```sh
@@ -52,6 +64,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
     - id: tool-gate
       name: dsh-tool-gate
       config:
+        enabled: true                                # false = 只保留工具数按钮，不限制任何工具
         baseTools: [read, write, edit, pwsh, bash]  # 首步常驻；本组合没有的名字自动忽略
         selectToolName: select_tools                # 两个工具名都必须匹配 ^[a-z][a-z0-9_]*$ 且互不相同
         delegateToolName: delegate
@@ -78,6 +91,7 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
 - **`hiddenTools`**：名字在快照阶段就被剔除，既不会出现在目录里，也不能被选中或被 `delegate` 指定。
 - **`delegate` 是延迟注册的**：`subagents` 服务可能晚于本插件激活，因此委派工具在服务出现时注册，并把名字补进已安装 agent 的工具面。
 - **不支持撤销**：只有"本轮保留"，没有"保留后立刻收回"；重置只发生在下一个用户消息。
+- **工具数按钮是只读投影**：它在 Host 侧折叠 `request/header`，不回放会话事件；`enabled: false` 时不限制任何工具，只保留按钮。若浏览器半侧从未收到该 projection（例如注册晚于会话打开），刷新一次页面即可。
 - **缓存代价**：每次选择都会让 `request/header` 变化一次并写一条 `developer/message`；支持 `toolUpdate` 的路由不会因此开新 series。
 - **只对新会话生效**：插件热重载不会追溯已经创建的 agent。
 
@@ -86,20 +100,21 @@ pnpm dsh --profile <profile> --dump-config  # 不启动也能确认这一行装�
 ```sh
 node scripts/build.mjs          # 构建 lib/
 node scripts/build.mjs --noEmit # 只做类型检查
-node tests/all.mjs              # 50 条测试
+node tests/all.mjs              # 60 条测试
+node --check client.js          # 浏览器半侧是手写模块，无构建步骤
 ```
 
 排查时设 `DSH_TOOL_GATE_DEBUG=1`，插件会把 `install`/`reserve`/`select`/`commit` 的决策打到 stderr。
 
-测试用一个复刻 restriction 语义的内存工具注册表（`tests/support/fake-tools.mjs`），覆盖：安装后只剩基础+网关工具、目录内容、选择替换语义、未知名字不炸、新用户消息重置、非用户消息不重置、`hiddenTools`、`applyToSubagents`、委派清单/delegate 预留/sealed、配置校验。
+测试用一个复刻 restriction 语义的内存工具注册表（`tests/support/fake-tools.mjs`），覆盖：安装后只剩基础+网关工具、目录内容、选择替换语义、未知名字不炸、新用户消息重置、非用户消息不重置、`hiddenTools`、`applyToSubagents`、委派清单/delegate 预留/sealed、配置校验、`enabled: false` 只注册投影、工具面投影的折叠与 wire 校验。
 
 ## 实验：开启 vs 不开启
 
 [tests/compare/](tests/compare/README.md) 是真实模型的 A/B 实验（fixture：`dsh-channel-manager` 的独立副本，四臂：`control` / `gated` / `gated-root` / `delegate-only`）。
 
-**注意**：已有的 [RESULTS-SUMMARY.md](tests/compare/RESULTS-SUMMARY.md) 数据来自上一版设计（`list_tools` + `enable_tools` + 按需解锁）。改成"每轮目录 + `select_tools`"后行为已变，那批数字只能当"工具面缩小 3.6× 且完成度不掉"的参考，不能代表当前实现；要新结论需要重跑：
+**注意**：`RESULTS-SUMMARY.md` 里较早的数据来自旧设计（`list_tools` + `enable_tools` + 按需解锁）；当前实现（每轮目录 + `select_tools`）的数据是 `RESULTS-catalog.*` / `RESULTS-catalog2.*`，两轮重复见 summary 的"两次重复的合并读法"。要新结论：
 
 ```sh
-node tests/compare/compare.mjs --tasks=all --arms=control,gated,gated-root,delegate-only --label=catalog
-node tests/compare/report.mjs catalog
+node tests/compare/compare.mjs --tasks=all --arms=control,gated,gated-root,delegate-only --label=catalog3
+node tests/compare/report.mjs catalog3
 ```

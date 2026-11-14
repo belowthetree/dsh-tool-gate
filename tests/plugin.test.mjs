@@ -10,10 +10,10 @@ import { describe, it } from 'node:test'
 
 import * as plugin from '../lib/index.js'
 import { Config, apply, inject, name } from '../lib/index.js'
-import { createHarness, createSubagents } from './support/fake-tools.mjs'
+import { createHarness, createProjections, createSubagents } from './support/fake-tools.mjs'
 
 /** A harness with a small surface and no header. */
-function harness(subagents) {
+function harness(subagents, projections) {
   return createHarness({
     tools: [
       { name: 'read', description: 'Read a file.' },
@@ -21,6 +21,7 @@ function harness(subagents) {
       { name: 'web_search', description: 'Search the web.' },
     ],
     subagents,
+    projections,
   })
 }
 
@@ -89,6 +90,30 @@ describe('apply', () => {
     assert.equal(catalog.required, true)
     ctx.emit('agent/created', { agent: ctx.agent })
     assert.match(catalog.text({ agent: ctx.agent }), /- web_search:/)
+  })
+
+  it('registers the tool-surface projection the composer badge reads', async () => {
+    const projections = createProjections()
+    const ctx = harness(undefined, projections)
+    apply(ctx.ctx, Config({}))
+    await Promise.resolve()
+    assert.equal(projections.definitions.length, 1)
+    const [definition] = projections.definitions
+    assert.equal(definition.key, 'toolGate')
+    assert.equal(definition.wire.summary, false)
+  })
+
+  it('badge-only mode keeps the projection but registers no gate surface', async () => {
+    const projections = createProjections()
+    const ctx = harness(createSubagents(), projections)
+    apply(ctx.ctx, Config({ enabled: false }))
+    await Promise.resolve()
+    assert.deepEqual(ctx.registered, [])
+    assert.equal(ctx.sections.length, 0)
+    assert.equal(ctx.contexts.length, 0)
+    assert.equal(projections.definitions.length, 1)
+    ctx.emit('agent/created', { agent: ctx.createAgent('child-1') })
+    assert.equal(ctx.filtersFor('child-1').length, 0)
   })
 
   it('refuses a tool name that is not a model-facing name', () => {

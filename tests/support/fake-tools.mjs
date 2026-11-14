@@ -20,7 +20,7 @@
  * @param {object} [options.subagents] Fake `subagents` service, or undefined to compose without one.
  * @returns The harness.
  */
-export function createHarness({ tools = [], header, subagents } = {}) {
+export function createHarness({ tools = [], header, subagents, projections } = {}) {
   const all = new Map(tools.map(tool => [tool.name, tool]))
   const filtersByAgent = new Map()
   const registered = []
@@ -102,7 +102,9 @@ export function createHarness({ tools = [], header, subagents } = {}) {
         return () => {}
       },
     },
-    get: name => (name === 'subagents' ? subagents : undefined),
+    get: name => (name === 'subagents' ? subagents : name === 'sessionProjections' ? projections : undefined),
+    // A scoped context exposes injected services as properties.
+    sessionProjections: projections,
     on(event, listener) {
       listeners.set(event, listener)
       return () => listeners.delete(event)
@@ -122,6 +124,7 @@ export function createHarness({ tools = [], header, subagents } = {}) {
   return {
     ctx,
     agent,
+    projections,
     createAgent,
     /** The root agent's live restriction list. */
     filters: filtersOf('agent-1'),
@@ -161,6 +164,25 @@ export function createSubagents({ providers = ['spawn'], failStart = false, root
       started.push(spec)
       if (failStart) throw new Error('backend refused to start')
       return { childId: spec.childId }
+    },
+  }
+}
+
+/**
+ * A fake `sessionProjections` service that records what the plugin registers.
+ * @returns the fake service, with the definitions it collected.
+ */
+export function createProjections() {
+  const definitions = []
+  return {
+    definitions,
+    async register(definition) {
+      definitions.push(definition)
+      return {
+        stateOf: () => undefined,
+        readerFor: () => () => undefined,
+        async dispose() {},
+      }
     },
   }
 }

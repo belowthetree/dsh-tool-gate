@@ -5,6 +5,9 @@
     - id: tool-gate
       name: dsh-tool-gate
       config:
+        # false keeps the composer-dock badge (and its session projection) but
+        # never restricts a tool: the read-out without the gate.
+        enabled: true
         # Tools exposed from the first step of every gated session. A name that
         # this composition does not provide is ignored, so one list works on
         # Windows (`pwsh`) and POSIX (`bash`) alike.
